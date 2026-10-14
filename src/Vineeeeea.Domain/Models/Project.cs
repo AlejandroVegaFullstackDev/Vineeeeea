@@ -107,6 +107,37 @@ public sealed record Project
         return withFirst.PlaceClip(withFirst.GetTrack(track.Id), second);
     }
 
+    /// <summary>
+    /// Freezes the frame under the playhead: splits the clip there, inserts a still of that moment that holds for
+    /// <paramref name="holdFrames"/>, and ripples the rest of the track to the right to make room. One undo step.
+    /// </summary>
+    public Project FreezeFrame(Guid clipId, long atFrame, MediaAsset frozenImage, Guid secondHalfId, Guid frozenClipId, long holdFrames)
+    {
+        if (holdFrames <= 0)
+        {
+            throw new BusinessRuleException("La congelación debe durar al menos un fotograma.");
+        }
+
+        var (track, clip) = RequireClip(clipId);
+        EnsureUnlocked(track);
+        if (atFrame <= clip.TimelineStartFrame || atFrame >= clip.TimelineEndFrame(Settings.FrameRate))
+        {
+            throw new BusinessRuleException("Coloca el cabezal dentro del clip para congelarlo.");
+        }
+
+        var afterSplit = SplitClip(clipId, atFrame, secondHalfId);
+        var splitTrack = afterSplit.GetTrack(track.Id);
+        var rippled = splitTrack.WithClips(splitTrack.Clips
+            .Select(other => other.TimelineStartFrame >= atFrame
+                ? other.WithTiming(other.TimelineStartFrame + holdFrames, other.SourceInUs, other.SourceDurationUs)
+                : other)
+            .ToImmutableList());
+
+        var holdUs = Settings.FrameRate.FramesToMicroseconds(holdFrames);
+        var frozenClip = new Clip(frozenClipId, frozenImage.Id, atFrame, 0, holdUs, 1, []);
+        return afterSplit.ReplaceTrack(rippled).AddAsset(frozenImage).InsertClip(track.Id, frozenClip);
+    }
+
     public Project DuplicateClip(Guid clipId, Guid newClipId)
     {
         EnsureClipIdIsFree(newClipId);

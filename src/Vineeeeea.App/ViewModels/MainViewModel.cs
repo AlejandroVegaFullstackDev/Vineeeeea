@@ -37,6 +37,7 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly ExportController export;
     private readonly ClipPreviewController clipPreviews;
     private readonly CaptionsController captions;
+    private readonly FreezeController freeze;
     private readonly FileDialogService dialogs;
     private readonly IUserPreferences preferences;
     private readonly Dictionary<Guid, Bitmap> thumbnails = [];
@@ -55,6 +56,7 @@ public sealed partial class MainViewModel : ObservableObject
         ExportController export,
         ClipPreviewController clipPreviews,
         CaptionsController captions,
+        FreezeController freeze,
         FileDialogService dialogs,
         IUserPreferences preferences)
     {
@@ -67,6 +69,7 @@ public sealed partial class MainViewModel : ObservableObject
         this.export = export;
         this.clipPreviews = clipPreviews;
         this.captions = captions;
+        this.freeze = freeze;
         this.dialogs = dialogs;
         this.preferences = preferences;
         TimelineTipVisible = !preferences.TimelineTipDismissed;
@@ -75,7 +78,7 @@ public sealed partial class MainViewModel : ObservableObject
         Format = new ProjectFormatViewModel(session, projectSettings, ReportStatus);
         Start = new StartViewModel(projectFiles, OpenProjectFromPathAsync, () => OpenProjectAsync(), ReportStatus);
         Export = new ExportViewModel(export, dialogs, session, () => ShowingExport = false, ReportStatus);
-        ClipTools = new ClipToolsViewModel(session, timeline, () => SelectedClipId, () => Player.PlayheadFrame, SplitClip, DeleteClip, ReportStatus);
+        ClipTools = new ClipToolsViewModel(session, timeline, () => SelectedClipId, () => Player.PlayheadFrame, SplitClip, DeleteClip, FreezeClipAsync, ReportStatus);
         AddMedia = new AddMediaViewModel(session, AppendAssetToTimeline, AddText, () => ImportMediaCommand.ExecuteAsync(null));
         Inspector = new InspectorViewModel(session, timeline, () => Player.PlayheadFrame, ReportStatus);
         Player.PlayheadMoved += (_, _) => Inspector.Show(SelectedClipId);
@@ -359,6 +362,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     public void SplitClip(Guid clipId) =>
         Run(() => timeline.SplitClip(clipId, Player.PlayheadFrame), "Clip dividido en el cabezal.");
+
+    public Task FreezeClipAsync(Guid clipId) =>
+        RunAsync(() => freeze.FreezeAtPlayheadAsync(clipId, Player.PlayheadFrame, CancellationToken.None), "Fotograma congelado.");
 
     public void DuplicateClip(Guid clipId) =>
         Run(() => SelectedClipId = timeline.DuplicateClip(clipId), "Clip duplicado a continuación.");

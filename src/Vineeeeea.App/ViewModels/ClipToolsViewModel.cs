@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Vineeeeea.Application.Controllers;
@@ -39,6 +40,7 @@ public sealed partial class ClipToolsViewModel : ObservableObject
     private readonly Func<long> playheadFrame;
     private readonly Action<Guid> splitAtPlayhead;
     private readonly Action<Guid> removeClip;
+    private readonly Func<Guid, Task> freezeAtPlayhead;
     private readonly Action<string> reportStatus;
     private bool showingModel;
 
@@ -49,6 +51,7 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         Func<long> playheadFrame,
         Action<Guid> splitAtPlayhead,
         Action<Guid> removeClip,
+        Func<Guid, Task> freezeAtPlayhead,
         Action<string> reportStatus)
     {
         this.session = session;
@@ -57,6 +60,7 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         this.playheadFrame = playheadFrame;
         this.splitAtPlayhead = splitAtPlayhead;
         this.removeClip = removeClip;
+        this.freezeAtPlayhead = freezeAtPlayhead;
         this.reportStatus = reportStatus;
     }
 
@@ -169,6 +173,9 @@ public sealed partial class ClipToolsViewModel : ObservableObject
     [RelayCommand]
     private void Trim() =>
         reportStatus("Arrastra los bordes del clip en la línea de tiempo para acortarlo.");
+
+    [RelayCommand]
+    private Task Freeze() => selectedClipId() is { } clipId ? freezeAtPlayhead(clipId) : Task.CompletedTask;
 
     [RelayCommand]
     private void Rotate()

@@ -27,6 +27,7 @@ public static class CompositionRoot
             new ExportController(session, renderEngine),
             new ClipPreviewController(new FfmpegMediaPreviewCache(processRunner, config)),
             new CaptionsController(session, new WhisperTranscriber(processRunner, config)),
+            new FreezeController(session, new FfmpegFrameExtractor(processRunner, config)),
             new FileDialogService(window.StorageProvider, window.Launcher),
             new JsonUserPreferences(config));
     }

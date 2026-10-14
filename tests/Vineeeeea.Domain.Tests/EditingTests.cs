@@ -319,6 +319,32 @@ public class EditingTests
     }
 
     [Fact]
+    public void Freezing_splits_inserts_a_still_and_ripples_the_rest_right()
+    {
+        var (project, clip) = ProjectWithClip(Video, VideoTrack);
+        var image = MediaAsset.StillImage(Guid.NewGuid(), @"C:\media\congelado.png", 1920, 1080);
+
+        var frozen = project.FreezeFrame(clip.Id, atFrame: 30, image, Guid.NewGuid(), Guid.NewGuid(), holdFrames: 30);
+
+        var clips = frozen.GetTrack(VideoTrack.Id).Clips;
+        Assert.Equal(3, clips.Count);
+        Assert.Equal(30, clips[0].TimelineEndFrame(ThirtyFps));                       // primera mitad: 0..30
+        Assert.Equal((30L, image.Id), (clips[1].TimelineStartFrame, clips[1].AssetId)); // congelado: 30..60
+        Assert.Equal(60, clips[1].TimelineEndFrame(ThirtyFps));
+        Assert.Equal(60, clips[2].TimelineStartFrame);                                // segunda mitad desplazada: 60..90
+        Assert.Equal(MediaKind.Image, frozen.GetAsset(clips[1].AssetId).Kind);
+    }
+
+    [Fact]
+    public void Freezing_outside_the_clip_is_rejected()
+    {
+        var (project, clip) = ProjectWithClip(Video, VideoTrack);
+        var image = MediaAsset.StillImage(Guid.NewGuid(), @"C:\media\x.png", 100, 100);
+
+        Assert.Throws<BusinessRuleException>(() => project.FreezeFrame(clip.Id, atFrame: 0, image, Guid.NewGuid(), Guid.NewGuid(), holdFrames: 30));
+    }
+
+    [Fact]
     public void A_locked_track_refuses_clip_edits_until_it_is_unlocked()
     {
         var (project, clip) = ProjectWithClip(Video, VideoTrack);

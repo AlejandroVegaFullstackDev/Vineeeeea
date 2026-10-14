@@ -221,7 +221,16 @@
                                         <TextBlock Text="Llena las franjas con el video borroso" Classes="caption" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Button>
-                                <Button Classes="row" Margin="0,0,6,0" Background="{DynamicResource Brush.Tile.Remove}"
+                                <Button Classes="row" Margin="0,0,6,6" Background="{DynamicResource Brush.Tile.Cut}"
+                                        Command="{Binding FreezeCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Congelar">
+                                    <StackPanel Spacing="4">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.Pause}" HorizontalAlignment="Left" />
+                                        <TextBlock Text="Congelar" FontWeight="Bold" />
+                                        <TextBlock Text="Pausa la imagen 2 s en este punto" Classes="caption" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Classes="row" Margin="6,0,0,6" Background="{DynamicResource Brush.Tile.Remove}"
                                         Command="{Binding RemoveCommand}" AutomationProperties.Name="Quitar">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Trash}" HorizontalAlignment="Left"
