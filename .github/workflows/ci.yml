@@ -16,5 +16,25 @@ jobs:
         run: choco install ffmpeg --no-progress -y
       - name: Compilar
         run: dotnet build Vineeeeea.slnx -c Release
-      - name: Probar
-        run: dotnet test Vineeeeea.slnx -c Release --no-build --filter "Category!=Whisper"
+
+      # Un video real (generado) para que el E2E headless de la app importe, edite y exporte de verdad.
+      - name: Generar video de prueba
+        run: >
+          ffmpeg -v error -y
+          -f lavfi -i testsrc=duration=3:size=1280x720:rate=30
+          -f lavfi -i sine=frequency=440:duration=3
+          -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest
+          "${{ runner.temp }}\e2e.mp4"
+
+      - name: Probar (dominio, aplicación, integración, app + E2E headless)
+        env:
+          VINEEEEEA_E2E_VIDEO: ${{ runner.temp }}\e2e.mp4
+        run: dotnet test Vineeeeea.slnx -c Release --no-build --filter "Category!=Whisper&Category!=Screenshots"
+
+      # E2E de escritorio (FlaUI): lanza el .exe real y lo maneja por UI Automation.
+      # No bloquea el build porque depende de que el runner tenga un escritorio interactivo.
+      - name: E2E de escritorio (FlaUI, informativo)
+        continue-on-error: true
+        env:
+          VINEEEEEA_APP_EXE: ${{ github.workspace }}\src\Vineeeeea.App\bin\Release\net10.0\Vineeeeea.App.exe
+        run: dotnet test tests/Vineeeeea.E2E.Tests/Vineeeeea.E2E.Tests.csproj -c Release --no-build --filter "Category=E2E"
