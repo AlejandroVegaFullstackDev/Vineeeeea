@@ -73,7 +73,8 @@
                     </StackPanel>
 
                     <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,10,0,0">
-                        <Button Classes="standard" Command="{Binding SearchOnComputerCommand}" HorizontalAlignment="Stretch">
+                        <Button Classes="standard" Command="{Binding SearchOnComputerCommand}" HorizontalAlignment="Stretch"
+                                AutomationProperties.Name="Buscar en mi computador">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Path Classes="icon" Data="{DynamicResource Icon.Search}" />
                                 <TextBlock Text="Buscar en mi computador" VerticalAlignment="Center" />
@@ -168,7 +169,8 @@
                             <!-- Acciones -->
                             <UniformGrid Columns="2">
                                 <Button Classes="row" Margin="0,0,6,6" Background="{DynamicResource Brush.Tile.Cut}"
-                                        Command="{Binding CutHereCommand}" IsVisible="{Binding IsVisualClip}">
+                                        Command="{Binding CutHereCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Cortar aquí">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Cut}" HorizontalAlignment="Left" />
                                         <TextBlock Text="Cortar aquí" FontWeight="Bold" />
@@ -176,7 +178,7 @@
                                     </StackPanel>
                                 </Button>
                                 <Button Classes="row" Margin="6,0,0,6" Background="{DynamicResource Brush.Tile.Trim}"
-                                        Command="{Binding TrimCommand}">
+                                        Command="{Binding TrimCommand}" AutomationProperties.Name="Acortar">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Trim}" HorizontalAlignment="Left" />
                                         <TextBlock Text="Acortar" FontWeight="Bold" />
@@ -184,7 +186,8 @@
                                     </StackPanel>
                                 </Button>
                                 <Button Classes="row" Margin="0,0,6,6" Background="{DynamicResource Brush.Tile.Rotate}"
-                                        Command="{Binding RotateCommand}" IsVisible="{Binding IsVisualClip}">
+                                        Command="{Binding RotateCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Girar">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Rotate}" HorizontalAlignment="Left" />
                                         <TextBlock Text="Girar" FontWeight="Bold" />
@@ -192,7 +195,8 @@
                                     </StackPanel>
                                 </Button>
                                 <Button Classes="row" Margin="6,0,0,6" Background="{DynamicResource Brush.Tile.Trim}"
-                                        Command="{Binding FlipHorizontalCommand}" IsVisible="{Binding IsVisualClip}">
+                                        Command="{Binding FlipHorizontalCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Voltear">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Rotate}" HorizontalAlignment="Left" />
                                         <TextBlock Text="Voltear" FontWeight="Bold" />
@@ -200,15 +204,25 @@
                                     </StackPanel>
                                 </Button>
                                 <Button Classes="row" Margin="0,0,6,0" Background="{DynamicResource Brush.Tile.Speed}"
-                                        Command="{Binding ToggleGreenScreenCommand}" IsVisible="{Binding IsVisualClip}">
+                                        Command="{Binding ToggleGreenScreenCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Pantalla verde">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Layers}" HorizontalAlignment="Left" />
                                         <TextBlock Text="Pantalla verde" FontWeight="Bold" />
                                         <TextBlock Text="Quita el fondo verde" Classes="caption" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Button>
-                                <Button Classes="row" Margin="6,0,0,0" Background="{DynamicResource Brush.Tile.Remove}"
-                                        Command="{Binding RemoveCommand}">
+                                <Button Classes="row" Margin="6,0,0,6" Background="{DynamicResource Brush.Tile.Rotate}"
+                                        Command="{Binding ToggleBlurBackgroundCommand}" IsVisible="{Binding IsVisualClip}"
+                                        AutomationProperties.Name="Fondo desenfocado">
+                                    <StackPanel Spacing="4">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.Fullscreen}" HorizontalAlignment="Left" />
+                                        <TextBlock Text="Fondo desenfocado" FontWeight="Bold" />
+                                        <TextBlock Text="Llena las franjas con el video borroso" Classes="caption" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Classes="row" Margin="0,0,6,0" Background="{DynamicResource Brush.Tile.Remove}"
+                                        Command="{Binding RemoveCommand}" AutomationProperties.Name="Quitar">
                                     <StackPanel Spacing="4">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Trash}" HorizontalAlignment="Left"
                                               Stroke="{DynamicResource Brush.Danger}" />
@@ -238,6 +252,35 @@
                                 </ItemsControl>
                             </StackPanel>
 
+                            <!-- Movimiento -->
+                            <StackPanel Spacing="6" IsVisible="{Binding IsVisualClip}">
+                                <TextBlock Text="Movimiento" FontWeight="Bold" />
+                                <ItemsControl ItemsSource="{Binding Movements}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="2" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:MovementOption">
+                                            <Button Classes="standard" Content="{Binding Title}" Margin="0,0,6,6" Padding="4,0"
+                                                    FontSize="{DynamicResource FontSize.Caption}"
+                                                    Command="{Binding $parent[ItemsControl].((vm:ClipToolsViewModel)DataContext).ApplyMovementCommand}"
+                                                    CommandParameter="{Binding}" HorizontalAlignment="Stretch" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ToggleButton Classes="option" HorizontalAlignment="Stretch" Height="36"
+                                              IsChecked="{Binding ReverseOn, Mode=OneWay}" Command="{Binding ToggleReverseCommand}"
+                                              AutomationProperties.Name="Reproducir al revés">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.Reverse}" />
+                                        <TextBlock Text="Reproducir al revés" VerticalAlignment="Center"
+                                                   FontSize="{DynamicResource FontSize.Caption}" />
+                                    </StackPanel>
+                                </ToggleButton>
+                            </StackPanel>
+
                             <!-- Volumen -->
                             <StackPanel Spacing="6" IsVisible="{Binding HasAudio}">
                                 <Grid ColumnDefinitions="*,Auto">
@@ -247,7 +290,8 @@
                                 </Grid>
                                 <Slider Minimum="0" Maximum="2" Value="{Binding Volume}" IsEnabled="{Binding !IsMuted}" />
                                 <ToggleButton Classes="option" HorizontalAlignment="Stretch" Height="36"
-                                              IsChecked="{Binding CleanAudioOn, Mode=OneWay}" Command="{Binding ToggleCleanAudioCommand}">
+                                              IsChecked="{Binding CleanAudioOn, Mode=OneWay}" Command="{Binding ToggleCleanAudioCommand}"
+                                              AutomationProperties.Name="Voz limpia">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <Path Classes="icon" Data="{DynamicResource Icon.Volume}" />
                                         <TextBlock Text="Voz limpia (quita ruido y nivela)" VerticalAlignment="Center"

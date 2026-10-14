@@ -31,6 +31,33 @@ public class RenderPlanBuilderTests
             .InsertClip(music.Id, new Clip(Guid.NewGuid(), Music.Id, 0, 0, TenSecondsUs, 1, [EffectInstance.CreateDefault(EffectCatalog.Volume).WithEnabled(false)]));
     }
 
+    private static Project ReversedClipProject()
+    {
+        var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
+        var reverse = EffectInstance.CreateDefault(EffectCatalog.Reverse).WithParameter(EffectCatalog.Amount, 1);
+        // Clip shows source [1s, 3s) forward; reversed it should show 3s at the start and 1s at the end.
+        return new Project(Guid.NewGuid(), "Reversa", new ProjectSettings(1920, 1080, new FrameRate(30, 1), 48_000))
+            .AddAsset(Video)
+            .AddTrack(track)
+            .InsertClip(track.Id, new Clip(Guid.NewGuid(), Video.Id, 0, 1_000_000, TwoSecondsUs, 1, [reverse]));
+    }
+
+    [Fact]
+    public void A_reversed_clip_previews_the_mirrored_source_frame()
+    {
+        // One preview frame at the clip's start must decode near the END of the source (3s), not the start (1s).
+        var layer = Assert.Single(RenderPlanBuilder.Build(ReversedClipProject(), 0, 1, Size).Layers);
+        Assert.True(layer.SourceStartUs > 2_900_000, $"Se esperaba cerca del final del origen, fue {layer.SourceStartUs}.");
+    }
+
+    [Fact]
+    public void A_reversed_clip_still_exports_from_the_source_start()
+    {
+        // The whole-clip export decodes [1s, 3s) forward and the reverse filter plays it backwards.
+        var layer = Assert.Single(RenderPlanBuilder.Build(ReversedClipProject(), 0, 60, Size).Layers);
+        Assert.Equal(1_000_000, layer.SourceStartUs);
+    }
+
     [Fact]
     public void Layers_follow_track_order_with_their_roles()
     {

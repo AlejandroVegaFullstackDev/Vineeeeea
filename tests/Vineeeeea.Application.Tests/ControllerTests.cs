@@ -5,6 +5,7 @@ using Vineeeeea.Application.Services;
 using Vineeeeea.Application.Utils;
 using Vineeeeea.Domain.Errors;
 using Vineeeeea.Domain.Models;
+using Vineeeeea.Domain.Utils;
 
 namespace Vineeeeea.Application.Tests;
 
@@ -203,5 +204,46 @@ public class ControllerTests
         new ProjectSettingsController(session).MatchCanvasTo(asset.Id);
 
         Assert.Equal((1080, 1920), (session.RequireProject().Settings.Width, session.RequireProject().Settings.Height));
+    }
+
+    [Fact]
+    public async Task A_camera_move_animates_a_parameter_across_the_clip_in_one_step()
+    {
+        var session = OpenSession();
+        var asset = await new MediaImportController(session, new FakeProbe(new ProbedMedia(ThreeSecondsUs, [VideoStream()])))
+            .ImportAsync(MediaPath, CancellationToken.None);
+        var timeline = new TimelineController(session);
+        var clip = timeline.AppendClip(timeline.AddTrack(TrackKind.Video).Id, asset.Id);
+
+        timeline.ApplyCameraMove(clip.Id, CameraMove.ZoomIn);
+
+        var effect = session.RequireProject().GetClip(clip.Id).FindEffect(EffectCatalog.Transform);
+        Assert.NotNull(effect);
+        var scale = effect!.Keyframes[EffectCatalog.Scale];
+        Assert.Equal(2, scale.Count);
+        Assert.Equal((clip.SourceInUs, 1), (scale[0].SourceUs, scale[0].Value));
+        Assert.Equal((clip.SourceEndUs, 1.35), (scale[1].SourceUs, scale[1].Value));
+
+        session.Undo();
+
+        Assert.Null(session.RequireProject().GetClip(clip.Id).FindEffect(EffectCatalog.Transform));
+    }
+
+    [Fact]
+    public async Task The_none_camera_move_clears_the_animation()
+    {
+        var session = OpenSession();
+        var asset = await new MediaImportController(session, new FakeProbe(new ProbedMedia(ThreeSecondsUs, [VideoStream()])))
+            .ImportAsync(MediaPath, CancellationToken.None);
+        var timeline = new TimelineController(session);
+        var clip = timeline.AppendClip(timeline.AddTrack(TrackKind.Video).Id, asset.Id);
+        timeline.ApplyCameraMove(clip.Id, CameraMove.PanAcross);
+
+        timeline.ApplyCameraMove(clip.Id, CameraMove.None);
+
+        var effect = session.RequireProject().GetClip(clip.Id).FindEffect(EffectCatalog.Transform);
+        Assert.NotNull(effect);
+        Assert.False(effect!.Keyframes.ContainsKey(EffectCatalog.Scale));
+        Assert.False(effect.Keyframes.ContainsKey(EffectCatalog.PositionX));
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Vineeeeea.Application.Controllers;
+using Vineeeeea.Application.Dtos;
 using Vineeeeea.Application.Services;
 using Vineeeeea.Domain.Errors;
 using Vineeeeea.Domain.Models;
@@ -12,6 +13,8 @@ using Vineeeeea.Domain.Utils;
 namespace Vineeeeea.App.ViewModels;
 
 public sealed record StyleOption(string Title, string? FilterName);
+
+public sealed record MovementOption(string Title, CameraMove Move);
 
 public sealed partial class SpeedOptionViewModel(double value, string label) : ObservableObject
 {
@@ -68,6 +71,14 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         new("B y N", "Blanco y negro"),
     ];
 
+    public IReadOnlyList<MovementOption> Movements { get; } =
+    [
+        new("Sin movimiento", CameraMove.None),
+        new("Acercar", CameraMove.ZoomIn),
+        new("Alejar", CameraMove.ZoomOut),
+        new("Izquierda a derecha", CameraMove.PanAcross),
+    ];
+
     [ObservableProperty]
     public partial bool HasClip { get; private set; }
 
@@ -82,6 +93,12 @@ public sealed partial class ClipToolsViewModel : ObservableObject
 
     [ObservableProperty]
     public partial bool GreenScreenOn { get; private set; }
+
+    [ObservableProperty]
+    public partial bool BlurBackgroundOn { get; private set; }
+
+    [ObservableProperty]
+    public partial bool ReverseOn { get; private set; }
 
     [ObservableProperty]
     public partial bool CleanAudioOn { get; private set; }
@@ -122,6 +139,8 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         IsMuted = gain == 0;
         Volume = IsMuted ? 1 : gain;
         GreenScreenOn = clip.FindEffect(EffectCatalog.ChromaKey) is not null;
+        BlurBackgroundOn = clip.FindEffect(EffectCatalog.Fill) is not null;
+        ReverseOn = (clip.FindEffect(EffectCatalog.Reverse)?.Parameters[EffectCatalog.Amount] ?? 0) >= 0.5;
         CleanAudioOn = clip.FindEffect(EffectCatalog.Denoise) is not null || clip.FindEffect(EffectCatalog.Normalize) is not null;
         showingModel = false;
     }
@@ -160,6 +179,35 @@ public sealed partial class ClipToolsViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ToggleReverse()
+    {
+        if (selectedClipId() is not { } clipId)
+        {
+            return;
+        }
+
+        if (ReverseOn)
+        {
+            Run(() => timeline.ResetEffect(clipId, EffectCatalog.Reverse), "Reproducción normal.");
+        }
+        else
+        {
+            Run(() => timeline.SetEffectParameter(clipId, EffectCatalog.Reverse, EffectCatalog.Amount, 1, playheadFrame()),
+                "Clip al revés (el vídeo y su audio).");
+        }
+    }
+
+    [RelayCommand]
+    private void ApplyMovement(MovementOption option)
+    {
+        if (selectedClipId() is { } clipId)
+        {
+            Run(() => timeline.ApplyCameraMove(clipId, option.Move),
+                option.Move == CameraMove.None ? "Sin movimiento." : $"Movimiento: {option.Title}.");
+        }
+    }
+
+    [RelayCommand]
     private void ToggleGreenScreen()
     {
         if (selectedClipId() is not { } clipId)
@@ -176,6 +224,26 @@ public sealed partial class ClipToolsViewModel : ObservableObject
             Run(() => timeline.SetEffectParameter(clipId, EffectCatalog.ChromaKey, EffectCatalog.Similarity,
                 EffectInstance.CreateDefault(EffectCatalog.ChromaKey).Parameters[EffectCatalog.Similarity], playheadFrame()),
                 "Pantalla verde activada: pon este clip sobre otro para ver el fondo.");
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleBlurBackground()
+    {
+        if (selectedClipId() is not { } clipId)
+        {
+            return;
+        }
+
+        if (BlurBackgroundOn)
+        {
+            Run(() => timeline.ResetEffect(clipId, EffectCatalog.Fill), "Fondo desenfocado quitado.");
+        }
+        else
+        {
+            Run(() => timeline.SetEffectParameter(clipId, EffectCatalog.Fill, EffectCatalog.Amount,
+                EffectInstance.CreateDefault(EffectCatalog.Fill).Parameters[EffectCatalog.Amount], playheadFrame()),
+                "Fondo desenfocado: las franjas se llenan con el mismo video borroso.");
         }
     }
 

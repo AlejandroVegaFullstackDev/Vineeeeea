@@ -20,6 +20,8 @@ public static class EffectCatalog
     public const string Dissolve = "dissolve";
     public const string Rotate = "rotate";
     public const string Flip = "flip";
+    public const string Reverse = "reverse";
+    public const string Fill = "fill";
     public const string ChromaKey = "chromakey";
     public const string Volume = "volume";
     public const string AudioFade = "audiofade";
@@ -54,6 +56,7 @@ public static class EffectCatalog
     private const double MaxCropFraction = 0.45;
     private const double MaxFadeSeconds = 5;
     private const double MaxDissolveSeconds = 2;
+    private const double DefaultFillBlur = 0.6;
     private const double DefaultChromaSimilarity = 0.30;
     private const double DefaultChromaBlend = 0.10;
     private const double MinLoudnessLufs = -30;
@@ -65,7 +68,7 @@ public static class EffectCatalog
         [
             new(PositionX, -1, 1, 0, Keyframable: true),
             new(PositionY, -1, 1, 0, Keyframable: true),
-            new(Scale, 0.1, 5, 1, Keyframable: false),
+            new(Scale, 0.1, 5, 1, Keyframable: true),
         ]),
         new(Crop, MediaKind.Video,
         [
@@ -89,6 +92,8 @@ public static class EffectCatalog
             new(Horizontal, 0, 1, 0, Keyframable: false),
             new(Vertical, 0, 1, 0, Keyframable: false),
         ]),
+        new(Reverse, MediaKind.Video, [new(Amount, 0, 1, 0, Keyframable: false)]),
+        new(Fill, MediaKind.Video, [new(Amount, 0, 1, DefaultFillBlur, Keyframable: false)]),
         new(ChromaKey, MediaKind.Video,
         [
             new(Similarity, 0.01, 1, DefaultChromaSimilarity, Keyframable: false),

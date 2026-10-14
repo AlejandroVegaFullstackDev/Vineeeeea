@@ -108,6 +108,21 @@ public class EasyEditorTests
     }
 
     [AvaloniaFact]
+    public async Task The_blur_background_tile_adds_and_removes_the_fill()
+    {
+        using var harness = EditorHarness.Open();
+        var clipId = await StartWithClipAsync(harness);
+        var tools = harness.ViewModel.ClipTools;
+
+        tools.ToggleBlurBackgroundCommand.Execute(null);
+        Assert.NotNull(harness.Session.RequireProject().GetClip(clipId).FindEffect(EffectCatalog.Fill));
+
+        tools.ToggleBlurBackgroundCommand.Execute(null);
+        Assert.Null(harness.Session.RequireProject().GetClip(clipId).FindEffect(EffectCatalog.Fill));
+        await harness.SettleAsync();
+    }
+
+    [AvaloniaFact]
     public async Task The_clean_voice_toggle_adds_denoise_and_normalize_together()
     {
         using var harness = EditorHarness.Open();

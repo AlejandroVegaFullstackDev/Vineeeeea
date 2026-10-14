@@ -68,6 +68,14 @@ public static class RenderPlanBuilder
         var sourceDurationUs = Math.Min(
             clip.SourceEndUs - sourceStartUs,
             (long)Math.Round(frameRate.FramesToMicroseconds(end - start) * clip.Speed));
+
+        // A reversed clip decodes the mirrored source window, so each frame (preview or export) shows the reversed
+        // content at that point: the reverse/areverse filter then plays the window backwards.
+        if (IsReversed(clip))
+        {
+            sourceStartUs = clip.SourceEndUs - (sourceStartUs - clip.SourceInUs) - sourceDurationUs;
+        }
+
         var offsetUs = frameRate.FramesToMicroseconds(start - visibleStartFrame);
         var visibleDurationUs = frameRate.FramesToMicroseconds(clipEnd - visibleStartFrame);
         var dissolveUs = frameRate.FramesToMicroseconds(clip.TimelineStartFrame - visibleStartFrame);
@@ -127,6 +135,9 @@ public static class RenderPlanBuilder
 
     private static FadeRamp? Ramp(long offsetUs, long clipDurationUs, long inUs, long outUs) =>
         inUs > 0 || outUs > 0 ? new FadeRamp(offsetUs, clipDurationUs, inUs, outUs) : null;
+
+    private static bool IsReversed(Clip clip) =>
+        clip.FindEffect(EffectCatalog.Reverse) is { Enabled: true } reverse && reverse.Parameters[EffectCatalog.Amount] >= 0.5;
 
     private static long SecondsToUs(double seconds) => (long)Math.Round(seconds * TimeUnits.MicrosecondsPerSecond);
 }

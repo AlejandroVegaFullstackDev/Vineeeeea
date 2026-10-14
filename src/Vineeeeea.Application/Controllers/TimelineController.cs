@@ -1,3 +1,4 @@
+using Vineeeeea.Application.Dtos;
 using Vineeeeea.Application.Services;
 using Vineeeeea.Domain.Errors;
 using Vineeeeea.Domain.Models;
@@ -163,7 +164,38 @@ public sealed class TimelineController(EditorSession session)
     public void ResetEffect(Guid clipId, string effectType) =>
         session.Apply(project => project.RemoveClipEffect(clipId, effectType));
 
+    /// <summary>
+    /// Writes a whole camera move (keyframes on scale and position) in one undo step, spread across the clip's own
+    /// source range so trimming or moving it never changes the motion.
+    /// </summary>
+    public void ApplyCameraMove(Guid clipId, CameraMove move)
+    {
+        var project = session.RequireProject();
+        var clip = project.GetClip(clipId);
+        var effect = clip.FindEffect(EffectCatalog.Transform) ?? EffectInstance.CreateDefault(EffectCatalog.Transform);
+        effect = move switch
+        {
+            CameraMove.ZoomIn => Animate(effect, clip, (EffectCatalog.Scale, 1, CameraZoom)),
+            CameraMove.ZoomOut => Animate(effect, clip, (EffectCatalog.Scale, CameraZoom, 1)),
+            CameraMove.PanAcross => Animate(effect, clip, (EffectCatalog.Scale, CameraPanZoom, CameraPanZoom), (EffectCatalog.PositionX, -1, 1)),
+            _ => effect
+                .WithoutKeyframes(EffectCatalog.Scale)
+                .WithoutKeyframes(EffectCatalog.PositionX)
+                .WithoutKeyframes(EffectCatalog.PositionY),
+        };
+
+        session.Apply(current => current.SetClipEffect(clipId, effect));
+    }
+
     private const string DefaultTextContent = "Escribe tu texto";
+
+    private const double CameraZoom = 1.35;
+    private const double CameraPanZoom = 1.3;
+
+    private static EffectInstance Animate(EffectInstance effect, Clip clip, params (string Parameter, double From, double To)[] moves) =>
+        moves.Aggregate(effect, (current, move) => current
+            .WithKeyframe(move.Parameter, clip.SourceInUs, move.From)
+            .WithKeyframe(move.Parameter, clip.SourceEndUs, move.To));
 
     private static string AddTextMergeKey(Guid textId) => $"{textId}/add";
 

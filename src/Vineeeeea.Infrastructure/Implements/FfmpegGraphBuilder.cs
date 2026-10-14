@@ -22,6 +22,8 @@ internal static class FfmpegGraphBuilder
     private const double MinAtempoFactor = 0.5;
     private const double MinNoiseFloorDb = -50;
     private const double MaxNoiseFloorDb = -20;
+    private const double MinFillSigma = 6;
+    private const double MaxFillSigma = 40;
     private const int MillisecondsPerSecond = 1000;
     private const int TextLineSpacingDivisor = 5;
     private const int TextBoxPaddingDivisor = 3;
@@ -60,9 +62,7 @@ internal static class FfmpegGraphBuilder
             if (layer.Text is { } text)
             {
                 var source = TextSource(plan, layer, text, textRendering ?? throw new BusinessRuleException("Falta la configuración para dibujar textos."));
-                filters.Add(VideoLayerChain(plan, layer, source, videoLayerCount));
-                filters.Add(Overlay(plan, layer, videoLayerCount));
-                videoLayerCount++;
+                videoLayerCount += AddVideoLayer(filters, plan, layer, source, videoLayerCount);
                 continue;
             }
 
@@ -81,9 +81,7 @@ internal static class FfmpegGraphBuilder
             {
                 var source = string.Concat(
                     "[", Integer(input), ":v]setpts=(PTS-STARTPTS)/", Number(layer.Speed), ",fps=", Rate(plan.FrameRate));
-                filters.Add(VideoLayerChain(plan, layer, source, videoLayerCount));
-                filters.Add(Overlay(plan, layer, videoLayerCount));
-                videoLayerCount++;
+                videoLayerCount += AddVideoLayer(filters, plan, layer, source, videoLayerCount);
             }
 
             if (usesAudio)
@@ -135,16 +133,83 @@ internal static class FfmpegGraphBuilder
             : source;
     }
 
-    private static string VideoLayerChain(RenderPlan plan, RenderLayer layer, string source, int videoLayer)
+    /// <summary>
+    /// Adds the filters that turn a layer into its final overlaid picture and returns how many base layers it used
+    /// (one normally, two when the blurred-background fill draws a cover copy behind the sharp picture).
+    /// </summary>
+    private static int AddVideoLayer(List<string> filters, RenderPlan plan, RenderLayer layer, string source, int videoLayer)
+    {
+        if (FindEffect(layer, EffectCatalog.Fill) is { } fill)
+        {
+            // split hands the clip to two chains; each label feeds a null so the chain starts "[label]null,filter…"
+            // (a bare "[label],filter" would read as an empty filter).
+            filters.Add(string.Concat(source, ",split=2[fillbg", Integer(videoLayer), "][fillfg", Integer(videoLayer), "]"));
+            filters.Add(BlurBackgroundChain(plan, layer, string.Concat("[fillbg", Integer(videoLayer), "]null"), fill, videoLayer));
+            filters.Add(BackgroundOverlay(plan, layer, videoLayer));
+            AddSharpLayer(filters, plan, layer, string.Concat("[fillfg", Integer(videoLayer), "]null"), videoLayer + 1);
+            return 2;
+        }
+
+        AddSharpLayer(filters, plan, layer, source, videoLayer);
+        return 1;
+    }
+
+    private static void AddSharpLayer(List<string> filters, RenderPlan plan, RenderLayer layer, string source, int videoLayer)
+    {
+        var transform = FindEffect(layer, EffectCatalog.Transform);
+        if (transform is null || !transform.Keyframes.ContainsKey(EffectCatalog.Scale))
+        {
+            filters.Add(VideoLayerChain(plan, layer, source, videoLayer, kenBurnsBase: null));
+            filters.Add(Overlay(plan, layer, videoLayer, panInChain: false));
+            return;
+        }
+
+        var baseScale = KenBurnsBaseScale(transform);
+        filters.Add(VideoLayerChain(plan, layer, source, videoLayer, baseScale));
+        filters.AddRange(KenBurnsFilters(plan, layer, videoLayer, transform, baseScale));
+        filters.Add(Overlay(plan, layer, videoLayer, panInChain: true));
+    }
+
+    /// <summary>A blurred copy of the clip scaled to cover the whole canvas, to fill the bars instead of black.</summary>
+    private static string BlurBackgroundChain(RenderPlan plan, RenderLayer layer, string source, EffectInstance fill, int videoLayer)
+    {
+        var width = Integer(plan.OutputSize.Width);
+        var height = Integer(plan.OutputSize.Height);
+        var sigma = Number(MinFillSigma + (MaxFillSigma - MinFillSigma) * fill.Parameters[EffectCatalog.Amount]);
+        return string.Join(',',
+            source,
+            string.Concat("scale=", width, ":", height, ":force_original_aspect_ratio=increase"),
+            string.Concat("crop=", width, ":", height),
+            string.Concat("gblur=sigma=", sigma),
+            "format=yuv420p",
+            string.Concat("setpts=PTS+", Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame)), "/TB[v", Integer(videoLayer), "]"));
+    }
+
+    private static string BackgroundOverlay(RenderPlan plan, RenderLayer layer, int videoLayer)
+    {
+        var start = Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame));
+        var end = Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame + layer.DurationFrames));
+        return string.Concat(
+            "[base", Integer(videoLayer), "][v", Integer(videoLayer), "]overlay=0:0:",
+            "eval=frame:eof_action=pass:enable='between(t,", start, ",", end, ")'",
+            "[base", Integer(videoLayer + 1), "]");
+    }
+
+    private static string VideoLayerChain(RenderPlan plan, RenderLayer layer, string source, int videoLayer, double? kenBurnsBase)
     {
         var width = Integer(plan.OutputSize.Width);
         var height = Integer(plan.OutputSize.Height);
         var transform = FindEffect(layer, EffectCatalog.Transform);
-        var scale = Number(transform?.Parameters[EffectCatalog.Scale] ?? 1);
+        var scale = Number(kenBurnsBase ?? transform?.Parameters[EffectCatalog.Scale] ?? 1);
         var fit = string.Concat("min(", width, "/iw,", height, "/ih)*", scale);
         var sourceSeconds = string.Concat("(", Seconds(layer.SourceStartUs), "+t*", Number(layer.Speed), ")");
 
         var chain = new List<string> { source };
+        if (ReverseOn(layer))
+        {
+            chain.Add("reverse");
+        }
+
         chain.AddRange(RotationFilters(layer));
         chain.AddRange(FlipFilters(layer));
 
@@ -172,9 +237,53 @@ internal static class FfmpegGraphBuilder
             chain.Add(string.Concat("colorchannelmixer=aa=", Number(opacity)));
         }
 
-        chain.Add(string.Concat("setpts=PTS+", Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame)), "/TB[v", Integer(videoLayer), "]"));
+        if (kenBurnsBase is null)
+        {
+            chain.Add(string.Concat("setpts=PTS+", Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame)), "/TB[v", Integer(videoLayer), "]"));
+        }
+        else
+        {
+            chain[^1] = string.Concat(chain[^1], "[layer", Integer(videoLayer), "]");
+        }
+
         return string.Join(',', chain);
     }
+
+    /// <summary>
+    /// Composites a fitted layer at its smallest scale onto a transparent canvas and magnifies it with zoompan, which
+    /// also pans. FFmpeg cannot change the scale filter's size per frame, and zoompan only magnifies, so the base
+    /// scale is the smallest keyframe (never above 1) and everything above it is zoom.
+    /// </summary>
+    private static IEnumerable<string> KenBurnsFilters(RenderPlan plan, RenderLayer layer, int videoLayer, EffectInstance transform, double baseScale)
+    {
+        var width = Integer(plan.OutputSize.Width);
+        var height = Integer(plan.OutputSize.Height);
+        var rate = Rate(plan.FrameRate);
+        var duration = Seconds(plan.FrameRate.FramesToMicroseconds(layer.DurationFrames));
+        var sourceSeconds = string.Concat("(", Seconds(layer.SourceStartUs), "+time*", Number(layer.Speed), ")");
+        var zoom = string.Concat("max(1,(", ParameterOverTime(transform, EffectCatalog.Scale, sourceSeconds), ")/", Number(baseScale), ")");
+        var panX = ParameterOverTime(transform, EffectCatalog.PositionX, sourceSeconds);
+        var panY = ParameterOverTime(transform, EffectCatalog.PositionY, sourceSeconds);
+
+        yield return string.Concat(
+            "color=c=black@0.0:s=", width, "x", height, ":r=", rate, ":d=", duration,
+            ",format=yuva420p[canvas", Integer(videoLayer), "]");
+        yield return string.Concat(
+            "[canvas", Integer(videoLayer), "][layer", Integer(videoLayer), "]overlay=",
+            "x='(main_w-overlay_w)/2':y='(main_h-overlay_h)/2':eof_action=pass[comp", Integer(videoLayer), "]");
+        yield return string.Concat(
+            "[comp", Integer(videoLayer), "]zoompan=",
+            "z='", zoom, "':x='(iw-iw/zoom)*(1+(", panX, "))/2':y='(ih-ih/zoom)*(1+(", panY, "))/2':",
+            "d=1:s=", width, "x", height, ":fps=", rate,
+            ",setpts=PTS+", Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame)), "/TB[v", Integer(videoLayer), "]");
+    }
+
+    /// <summary>The scale a zoompan layer is built at: the smallest keyframe, kept at or below the fit so zoompan's zoom is at least 1.</summary>
+    private static double KenBurnsBaseScale(EffectInstance transform) =>
+        Math.Min(1, transform.Keyframes[EffectCatalog.Scale].Min(keyframe => keyframe.Value));
+
+    private static bool ReverseOn(RenderLayer layer) =>
+        FindEffect(layer, EffectCatalog.Reverse)?.Parameters[EffectCatalog.Amount] is >= 0.5;
 
     /// <summary>Quarter-turn rotation applied before scaling, so the letterbox fit uses the turned dimensions.</summary>
     private static IEnumerable<string> RotationFilters(RenderLayer layer)
@@ -279,14 +388,19 @@ internal static class FfmpegGraphBuilder
         return string.Join('*', factors);
     }
 
-    private static string Overlay(RenderPlan plan, RenderLayer layer, int videoLayer)
+    private static string Overlay(RenderPlan plan, RenderLayer layer, int videoLayer, bool panInChain)
     {
         var start = Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame));
         var end = Seconds(plan.FrameRate.FramesToMicroseconds(layer.StartFrame + layer.DurationFrames));
         var sourceSeconds = string.Concat("(", Seconds(layer.SourceStartUs), "+(t-", start, ")*", Number(layer.Speed), ")");
         var transform = FindEffect(layer, EffectCatalog.Transform);
-        var x = transform is null ? "0" : ParameterOverTime(transform, EffectCatalog.PositionX, sourceSeconds);
-        var y = transform is null ? "0" : ParameterOverTime(transform, EffectCatalog.PositionY, sourceSeconds);
+        var x = "0";
+        var y = "0";
+        if (transform is not null && !panInChain)
+        {
+            x = ParameterOverTime(transform, EffectCatalog.PositionX, sourceSeconds);
+            y = ParameterOverTime(transform, EffectCatalog.PositionY, sourceSeconds);
+        }
 
         return string.Concat(
             "[base", Integer(videoLayer), "][v", Integer(videoLayer), "]overlay=",
@@ -308,6 +422,11 @@ internal static class FfmpegGraphBuilder
         var delayMs = Integer(plan.FrameRate.FramesToMicroseconds(layer.StartFrame) * MillisecondsPerSecond / TimeUnits.MicrosecondsPerSecond);
 
         var chain = new List<string> { string.Concat("[", Integer(input), ":a]asetpts=PTS-STARTPTS") };
+        if (ReverseOn(layer))
+        {
+            chain.Add("areverse");
+        }
+
         chain.AddRange(AtempoSteps(layer.Speed).Select(step => string.Concat("atempo=", Number(step))));
         if (FindEffect(layer, EffectCatalog.Denoise)?.Parameters[EffectCatalog.Amount] is > 0 and var denoise)
         {

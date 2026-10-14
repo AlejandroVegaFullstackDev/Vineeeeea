@@ -97,6 +97,33 @@ public class FfmpegRenderEngineTests
     }
 
     [Fact]
+    public async Task The_blurred_background_fill_fills_the_side_bars_with_content()
+    {
+        using var directory = new TemporaryDirectory();
+        var mediaPath = directory.Combine("vertical.mp4");
+        await TestMedia.GenerateVerticalClipAsync(mediaPath);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, mediaPath, 1_000_000, 180, 320, hasAudio: false);
+        var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
+        var project = new Project(Guid.NewGuid(), "Fondo", new ProjectSettings(Canvas.Width, Canvas.Height, new FrameRate(30, 1), 48_000))
+            .AddAsset(video)
+            .AddTrack(track)
+            .InsertClip(track.Id, new Clip(Guid.NewGuid(), video.Id, 0, 0, 1_000_000, 1,
+                [EffectInstance.CreateDefault(EffectCatalog.Fill)]));
+
+        byte[]? frame = null;
+        await new FfmpegRenderEngine(processRunner, new TextFileStore(Config), Config).StreamVideoAsync(
+            RenderPlanBuilder.Build(project, 0, 1, Canvas), (pixels, _) => { frame = pixels; return ValueTask.CompletedTask; }, CancellationToken.None);
+
+        Assert.NotNull(frame);
+        // A vertical clip leaves side bars on a 320x240 canvas; with the fill they hold blurred content, not black.
+        // Without the fill the whole left-bar column (x=2) is black; with it, some pixel in that column has colour.
+        var leftBarHasContent = Enumerable.Range(0, Canvas.Height)
+            .Select(y => (y * Canvas.Width + 2) * 4)
+            .Any(index => frame![index] != 0 || frame[index + 1] != 0 || frame[index + 2] != 0);
+        Assert.True(leftBarHasContent, "La franja izquierda quedó negra: el fondo no se rellenó.");
+    }
+
+    [Fact]
     public async Task Gaps_render_as_black()
     {
         using var directory = new TemporaryDirectory();
@@ -291,5 +318,77 @@ public class FfmpegRenderEngineTests
 
         var probed = await new FfprobeMediaProbe(processRunner, Config).ProbeAsync(outputPath, CancellationToken.None);
         Assert.InRange(probed.DurationUs ?? 0, 1_500_000, 1_800_000);
+    }
+
+    [Fact]
+    public async Task A_reversed_clip_plays_its_last_frame_first()
+    {
+        using var directory = new TemporaryDirectory();
+        var mediaPath = directory.Combine("rojo-azul.mp4");
+        await TestMedia.GenerateRedThenBlueClipAsync(mediaPath);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, mediaPath, TwoSecondsUs, 320, 240, hasAudio: false);
+        var forward = new Clip(Guid.NewGuid(), video.Id, 0, 0, TwoSecondsUs, 1, []);
+        var reversed = new Clip(Guid.NewGuid(), video.Id, 0, 0, TwoSecondsUs, 1,
+            [EffectInstance.CreateDefault(EffectCatalog.Reverse).WithParameter(EffectCatalog.Amount, 1)]);
+
+        var forwardFrames = await RenderFramesAsync(ProjectWithClip(video, forward));
+        var reversedFrames = await RenderFramesAsync(ProjectWithClip(video, reversed));
+
+        Assert.True(IsRed(forwardFrames[0], Canvas.Width / 2, Canvas.Height / 2), "El clip normal empieza en rojo.");
+        Assert.True(IsBlue(reversedFrames[0], Canvas.Width / 2, Canvas.Height / 2), "El clip al revés empieza por su último fotograma.");
+        Assert.True(IsBlue(forwardFrames[^1], Canvas.Width / 2, Canvas.Height / 2), "El clip normal termina en azul.");
+        Assert.True(IsRed(reversedFrames[^1], Canvas.Width / 2, Canvas.Height / 2), "El clip al revés termina en rojo.");
+    }
+
+    [Fact]
+    public async Task An_animated_scale_zooms_the_picture_over_time()
+    {
+        using var directory = new TemporaryDirectory();
+        var imagePath = directory.Combine("cuadro.png");
+        await TestMedia.GenerateCornerSquareImageAsync(imagePath);
+        var photo = MediaAsset.StillImage(Guid.NewGuid(), imagePath, 320, 240);
+        var transform = EffectInstance.CreateDefault(EffectCatalog.Transform)
+            .WithKeyframe(EffectCatalog.Scale, 0, 1)
+            .WithKeyframe(EffectCatalog.Scale, TwoSecondsUs, 1.35);
+        var clip = new Clip(Guid.NewGuid(), photo.Id, 0, 0, TwoSecondsUs, 1, [transform]);
+
+        var frames = await RenderFramesAsync(ProjectWithClip(photo, clip));
+
+        Assert.Equal(60, frames.Count);
+        Assert.True(IsRed(frames[0], 30, 30), "El cuadro rojo debería verse al empezar.");
+        Assert.False(IsRed(frames[^1], 30, 30), "Al acercar, el cuadro rojo debería salir del encuadre.");
+    }
+
+    private static Project ProjectWithClip(MediaAsset asset, Clip clip)
+    {
+        var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
+        return new Project(Guid.NewGuid(), "Prueba", new ProjectSettings(Canvas.Width, Canvas.Height, new FrameRate(30, 1), 48_000))
+            .AddAsset(asset)
+            .AddTrack(track)
+            .InsertClip(track.Id, clip);
+    }
+
+    private async Task<List<byte[]>> RenderFramesAsync(Project project)
+    {
+        var frames = new List<byte[]>();
+        await new FfmpegRenderEngine(processRunner, new TextFileStore(Config), Config).StreamVideoAsync(
+            RenderPlanBuilder.Build(project, 0, project.EndFrame(), Canvas),
+            (data, _) =>
+            {
+                frames.Add(data);
+                return ValueTask.CompletedTask;
+            },
+            CancellationToken.None);
+        return frames;
+    }
+
+    private static bool IsRed(byte[] frame, int x, int y) => Channel(frame, x, y) is var (blue, green, red) && red > 180 && green < 80 && blue < 80;
+
+    private static bool IsBlue(byte[] frame, int x, int y) => Channel(frame, x, y) is var (blue, green, red) && blue > 180 && red < 80 && green < 80;
+
+    private static (byte Blue, byte Green, byte Red) Channel(byte[] frame, int x, int y)
+    {
+        var index = (y * Canvas.Width + x) * VideoFrame.BytesPerPixel;
+        return (frame[index], frame[index + 1], frame[index + 2]);
     }
 }

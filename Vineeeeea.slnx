@@ -9,6 +9,7 @@
     <Project Path="tests/Vineeeeea.App.Tests/Vineeeeea.App.Tests.csproj" />
     <Project Path="tests/Vineeeeea.Application.Tests/Vineeeeea.Application.Tests.csproj" />
     <Project Path="tests/Vineeeeea.Domain.Tests/Vineeeeea.Domain.Tests.csproj" />
+    <Project Path="tests/Vineeeeea.E2E.Tests/Vineeeeea.E2E.Tests.csproj" />
     <Project Path="tests/Vineeeeea.IntegrationTests/Vineeeeea.IntegrationTests.csproj" />
   </Folder>
 </Solution>
