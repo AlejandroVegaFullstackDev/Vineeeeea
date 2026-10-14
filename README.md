@@ -1,4 +1,5 @@
 # Vineeeeea
+<img width="864" height="536" alt="logo-emblema" src="https://github.com/user-attachments/assets/4365be0e-07bb-4720-b90d-413af5512ac9" />
 
 Editor de video de escritorio para Windows en C#/.NET 10 y Avalonia 12.
 
