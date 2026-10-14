@@ -311,13 +311,25 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="vm:StyleOption">
-                                            <Button Classes="standard" Content="{Binding Title}" Margin="0,0,6,0" Padding="4,0"
+                                            <Button Classes="standard" Content="{Binding Title}" Margin="0,0,6,6" Padding="4,0"
                                                     FontSize="{DynamicResource FontSize.Caption}"
                                                     Command="{Binding $parent[ItemsControl].((vm:ClipToolsViewModel)DataContext).ApplyStyleCommand}"
                                                     CommandParameter="{Binding}" HorizontalAlignment="Stretch" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                <UniformGrid Columns="2">
+                                    <ToggleButton Classes="option" Margin="0,0,6,0" Height="36"
+                                                  IsChecked="{Binding GrainOn, Mode=OneWay}" Command="{Binding ToggleGrainCommand}"
+                                                  AutomationProperties.Name="Grano de película">
+                                        <TextBlock Text="Grano de película" FontSize="{DynamicResource FontSize.Caption}" VerticalAlignment="Center" />
+                                    </ToggleButton>
+                                    <ToggleButton Classes="option" Height="36"
+                                                  IsChecked="{Binding PixelateOn, Mode=OneWay}" Command="{Binding TogglePixelateCommand}"
+                                                  AutomationProperties.Name="Pixelado">
+                                        <TextBlock Text="Pixelado" FontSize="{DynamicResource FontSize.Caption}" VerticalAlignment="Center" />
+                                    </ToggleButton>
+                                </UniformGrid>
                             </StackPanel>
 
                             <!-- Luz -->

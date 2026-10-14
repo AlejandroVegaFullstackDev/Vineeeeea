@@ -123,6 +123,24 @@ public class EasyEditorTests
     }
 
     [AvaloniaFact]
+    public async Task The_grain_and_pixelate_toggles_add_and_remove_their_effects()
+    {
+        using var harness = EditorHarness.Open();
+        var clipId = await StartWithClipAsync(harness);
+        var tools = harness.ViewModel.ClipTools;
+
+        tools.ToggleGrainCommand.Execute(null);
+        tools.TogglePixelateCommand.Execute(null);
+        var clip = harness.Session.RequireProject().GetClip(clipId);
+        Assert.NotNull(clip.FindEffect(EffectCatalog.Grain));
+        Assert.NotNull(clip.FindEffect(EffectCatalog.Pixelate));
+
+        tools.ToggleGrainCommand.Execute(null);
+        Assert.Null(harness.Session.RequireProject().GetClip(clipId).FindEffect(EffectCatalog.Grain));
+        await harness.SettleAsync();
+    }
+
+    [AvaloniaFact]
     public async Task The_clean_voice_toggle_adds_denoise_and_normalize_together()
     {
         using var harness = EditorHarness.Open();

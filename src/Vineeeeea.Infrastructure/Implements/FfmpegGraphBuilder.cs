@@ -24,6 +24,9 @@ internal static class FfmpegGraphBuilder
     private const double MaxNoiseFloorDb = -20;
     private const double MinFillSigma = 6;
     private const double MaxFillSigma = 40;
+    private const double MinPixelBlock = 6;
+    private const double MaxPixelBlock = 48;
+    private const double MaxGrainStrength = 40;
     private const int MillisecondsPerSecond = 1000;
     private const int TextLineSpacingDivisor = 5;
     private const int TextBoxPaddingDivisor = 3;
@@ -367,6 +370,17 @@ internal static class FfmpegGraphBuilder
         if (AmountOf(layer, EffectCatalog.Vignette) is > 0 and var vignette)
         {
             yield return string.Concat("vignette=angle=", Number(vignette * Math.PI / 2));
+        }
+
+        if (AmountOf(layer, EffectCatalog.Pixelate) is > 0 and var pixelate)
+        {
+            var block = (int)Math.Round(MinPixelBlock + (MaxPixelBlock - MinPixelBlock) * pixelate);
+            yield return string.Concat("pixelize=width=", Integer(block), ":height=", Integer(block));
+        }
+
+        if (AmountOf(layer, EffectCatalog.Grain) is > 0 and var grain)
+        {
+            yield return string.Concat("noise=alls=", Integer((int)Math.Round(grain * MaxGrainStrength)), ":allf=t+u");
         }
     }
 

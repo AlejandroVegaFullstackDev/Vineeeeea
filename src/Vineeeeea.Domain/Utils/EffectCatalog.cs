@@ -22,6 +22,8 @@ public static class EffectCatalog
     public const string Flip = "flip";
     public const string Reverse = "reverse";
     public const string Fill = "fill";
+    public const string Grain = "grain";
+    public const string Pixelate = "pixelate";
     public const string ChromaKey = "chromakey";
     public const string Volume = "volume";
     public const string AudioFade = "audiofade";
@@ -94,6 +96,8 @@ public static class EffectCatalog
         ]),
         new(Reverse, MediaKind.Video, [new(Amount, 0, 1, 0, Keyframable: false)]),
         new(Fill, MediaKind.Video, [new(Amount, 0, 1, DefaultFillBlur, Keyframable: false)]),
+        new(Grain, MediaKind.Video, [new(Amount, 0, 1, 0, Keyframable: false)]),
+        new(Pixelate, MediaKind.Video, [new(Amount, 0, 1, 0, Keyframable: false)]),
         new(ChromaKey, MediaKind.Video,
         [
             new(Similarity, 0.01, 1, DefaultChromaSimilarity, Keyframable: false),

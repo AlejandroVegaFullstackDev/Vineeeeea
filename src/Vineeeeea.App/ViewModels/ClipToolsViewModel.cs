@@ -69,6 +69,10 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         new("Vivo", "Vívido"),
         new("Cálido", "Cálido"),
         new("B y N", "Blanco y negro"),
+        new("Pastel", "Pastel"),
+        new("Dramático", "Dramático"),
+        new("Nocturno", "Nocturno"),
+        new("Cine", "Cine"),
     ];
 
     public IReadOnlyList<MovementOption> Movements { get; } =
@@ -96,6 +100,12 @@ public sealed partial class ClipToolsViewModel : ObservableObject
 
     [ObservableProperty]
     public partial bool BlurBackgroundOn { get; private set; }
+
+    [ObservableProperty]
+    public partial bool GrainOn { get; private set; }
+
+    [ObservableProperty]
+    public partial bool PixelateOn { get; private set; }
 
     [ObservableProperty]
     public partial bool ReverseOn { get; private set; }
@@ -140,6 +150,8 @@ public sealed partial class ClipToolsViewModel : ObservableObject
         Volume = IsMuted ? 1 : gain;
         GreenScreenOn = clip.FindEffect(EffectCatalog.ChromaKey) is not null;
         BlurBackgroundOn = clip.FindEffect(EffectCatalog.Fill) is not null;
+        GrainOn = clip.FindEffect(EffectCatalog.Grain) is not null;
+        PixelateOn = clip.FindEffect(EffectCatalog.Pixelate) is not null;
         ReverseOn = (clip.FindEffect(EffectCatalog.Reverse)?.Parameters[EffectCatalog.Amount] ?? 0) >= 0.5;
         CleanAudioOn = clip.FindEffect(EffectCatalog.Denoise) is not null || clip.FindEffect(EffectCatalog.Normalize) is not null;
         showingModel = false;
@@ -244,6 +256,29 @@ public sealed partial class ClipToolsViewModel : ObservableObject
             Run(() => timeline.SetEffectParameter(clipId, EffectCatalog.Fill, EffectCatalog.Amount,
                 EffectInstance.CreateDefault(EffectCatalog.Fill).Parameters[EffectCatalog.Amount], playheadFrame()),
                 "Fondo desenfocado: las franjas se llenan con el mismo video borroso.");
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleGrain() => ToggleStrength(EffectCatalog.Grain, GrainOn, 0.45, "Grano de película", "Grano quitado");
+
+    [RelayCommand]
+    private void TogglePixelate() => ToggleStrength(EffectCatalog.Pixelate, PixelateOn, 0.55, "Pixelado activado", "Pixelado quitado");
+
+    private void ToggleStrength(string effectType, bool isOn, double amount, string onMessage, string offMessage)
+    {
+        if (selectedClipId() is not { } clipId)
+        {
+            return;
+        }
+
+        if (isOn)
+        {
+            Run(() => timeline.ResetEffect(clipId, effectType), offMessage);
+        }
+        else
+        {
+            Run(() => timeline.SetEffectParameter(clipId, effectType, EffectCatalog.Amount, amount, playheadFrame()), onMessage);
         }
     }
 

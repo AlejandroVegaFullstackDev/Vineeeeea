@@ -124,6 +124,32 @@ public class FfmpegRenderEngineTests
     }
 
     [Fact]
+    public async Task Renders_a_clip_with_grain_and_pixelate()
+    {
+        using var directory = new TemporaryDirectory();
+        var mediaPath = directory.Combine("clip.mp4");
+        await TestMedia.GenerateClipAsync(mediaPath);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, mediaPath, TwoSecondsUs, 320, 240, hasAudio: true);
+        var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
+        var project = new Project(Guid.NewGuid(), "Estilos", new ProjectSettings(Canvas.Width, Canvas.Height, new FrameRate(30, 1), 48_000))
+            .AddAsset(video)
+            .AddTrack(track)
+            .InsertClip(track.Id, new Clip(Guid.NewGuid(), video.Id, 0, 0, TwoSecondsUs, 1,
+            [
+                EffectInstance.CreateDefault(EffectCatalog.Pixelate).WithParameter(EffectCatalog.Amount, 0.6),
+                EffectInstance.CreateDefault(EffectCatalog.Grain).WithParameter(EffectCatalog.Amount, 0.5),
+            ]));
+
+        byte[]? frame = null;
+        await new FfmpegRenderEngine(processRunner, new TextFileStore(Config), Config).StreamVideoAsync(
+            RenderPlanBuilder.Build(project, 0, 1, Canvas), (pixels, _) => { frame = pixels; return ValueTask.CompletedTask; }, CancellationToken.None);
+
+        Assert.NotNull(frame);
+        Assert.Equal(Canvas.FrameBytes, frame!.Length);
+        Assert.Contains(frame, value => value is not 0 and not 255);
+    }
+
+    [Fact]
     public async Task Gaps_render_as_black()
     {
         using var directory = new TemporaryDirectory();
