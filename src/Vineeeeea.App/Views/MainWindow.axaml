@@ -1,0 +1,424 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Vineeeeea.App.ViewModels"
+        xmlns:views="using:Vineeeeea.App.Views"
+        x:Class="Vineeeeea.App.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="{Binding Title}"
+        Icon="/Assets/Brand/vineeeeea.ico"
+        Background="{DynamicResource Brush.Bg.App}"
+        FontFamily="{DynamicResource Font.UI}"
+        Width="1400" Height="860" MinWidth="1280" MinHeight="720">
+
+    <Window.Styles>
+        <Style Selector="TextBlock.heading">
+            <Setter Property="FontFamily" Value="{DynamicResource Font.Heading}" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSize.Heading}" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+        <Style Selector="TextBlock.secondary">
+            <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Secondary}" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSize.Caption}" />
+        </Style>
+        <!-- Herramienta de la barra del timeline; la activa va en tinta con icono ácido. -->
+        <Style Selector="ToggleButton.tool">
+            <Setter Property="Theme" Value="{StaticResource StandardButton}" />
+            <Setter Property="Width" Value="{DynamicResource Size.Control}" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style Selector="ToggleButton.tool:checked /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource Brush.Text.Primary}" />
+        </Style>
+        <Style Selector="ToggleButton.tool:checked Path.icon">
+            <Setter Property="Stroke" Value="{DynamicResource Brush.Accent.Primary}" />
+        </Style>
+        <Style Selector="Button.iconbtn">
+            <Setter Property="Theme" Value="{StaticResource StandardButton}" />
+            <Setter Property="Width" Value="{DynamicResource Size.IconButton}" />
+            <Setter Property="Height" Value="{DynamicResource Size.IconButton}" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style Selector="Border.clip">
+            <Setter Property="Background" Value="{DynamicResource Brush.Timeline.Video}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Strong}" />
+            <Setter Property="BorderThickness" Value="{DynamicResource Border.Width}" />
+            <Setter Property="CornerRadius" Value="{DynamicResource Radius.S}" />
+            <Setter Property="ClipToBounds" Value="True" />
+        </Style>
+        <Style Selector="Border.clip.selected">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Timeline.ClipSelected}" />
+            <Setter Property="BorderThickness" Value="{DynamicResource Border.WidthSelected}" />
+        </Style>
+        <Style Selector="Border.trim-handle">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Background" Value="{DynamicResource Brush.Timeline.ClipSelected}" />
+            <Setter Property="Cursor" Value="SizeWestEast" />
+        </Style>
+        <Style Selector="ListBox.tracks > ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style Selector="ItemsControl.clips > ContentPresenter" x:DataType="vm:ClipItemViewModel">
+            <Setter Property="Canvas.Left" Value="{Binding Left}" />
+        </Style>
+        <Style Selector="ItemsControl.ruler > ContentPresenter" x:DataType="vm:RulerTickViewModel">
+            <Setter Property="Canvas.Left" Value="{Binding Left}" />
+        </Style>
+    </Window.Styles>
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveProjectCommand}" />
+        <KeyBinding Gesture="Ctrl+I" Command="{Binding ImportMediaCommand}" />
+        <KeyBinding Gesture="Ctrl+T" Command="{Binding AddTextCommand}" />
+    </Window.KeyBindings>
+
+    <Panel>
+    <Panel IsVisible="{Binding !HasProject}">
+        <views:StartView DataContext="{Binding Start}" />
+    </Panel>
+    <Panel IsVisible="{Binding IsExportScreen}">
+        <views:ExportView DataContext="{Binding Export}" />
+    </Panel>
+    <Panel IsVisible="{Binding IsEasyEditing}">
+        <views:EasyEditorView />
+    </Panel>
+    <DockPanel IsVisible="{Binding IsAdvancedEditing}" Margin="12">
+        <!-- Barra superior: menús · nombre del proyecto · Exportar -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,10">
+            <Menu VerticalAlignment="Center" Background="Transparent">
+                <MenuItem Header="Archivo">
+                    <MenuItem Header="Nuevo" Command="{Binding NewProjectCommand}" />
+                    <MenuItem Header="Abrir…" Command="{Binding OpenProjectCommand}" />
+                    <MenuItem Header="Guardar" Command="{Binding SaveProjectCommand}" InputGesture="Ctrl+S" />
+                    <MenuItem Header="Guardar como…" Command="{Binding SaveProjectAsCommand}" />
+                    <Separator />
+                    <MenuItem Header="Importar medios…" Command="{Binding ImportMediaCommand}" InputGesture="Ctrl+I" />
+                    <MenuItem Header="Exportar video…" Command="{Binding ShowExportCommand}" InputGesture="Ctrl+E" />
+                </MenuItem>
+                <MenuItem Header="Editar">
+                    <MenuItem Header="Deshacer" Command="{Binding UndoCommand}" InputGesture="Ctrl+Z" />
+                    <MenuItem Header="Rehacer" Command="{Binding RedoCommand}" InputGesture="Ctrl+Shift+Z" />
+                    <Separator />
+                    <MenuItem Header="Dividir en el cabezal" Command="{Binding SplitSelectedClipCommand}" InputGesture="S" />
+                    <MenuItem Header="Eliminar clip" Command="{Binding DeleteSelectedClipCommand}" InputGesture="Delete" />
+                    <MenuItem Header="Agregar texto" Command="{Binding AddTextCommand}" InputGesture="Ctrl+T" />
+                    <Separator />
+                    <MenuItem Header="Agregar pista de video" Command="{Binding AddVideoTrackCommand}" />
+                    <MenuItem Header="Agregar pista de audio" Command="{Binding AddAudioTrackCommand}" />
+                </MenuItem>
+                <MenuItem Header="Ver">
+                    <MenuItem Header="Modo fácil" Command="{Binding ToggleAdvancedModeCommand}" />
+                    <MenuItem Header="Imán" Command="{Binding ToggleMagnetCommand}" InputGesture="N" />
+                </MenuItem>
+                <MenuItem Header="Ayuda">
+                    <MenuItem Header="Cómo editar" Command="{Binding HelpCommand}" />
+                </MenuItem>
+            </Menu>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Vineeeeea" FontFamily="{DynamicResource Font.Brand}" FontSize="26" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ProjectSummary}" Classes="mono secondary" VerticalAlignment="Center" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Classes="standard" Content="{Binding ModeActionLabel}" Command="{Binding ToggleAdvancedModeCommand}" />
+                <Button Classes="primary" Command="{Binding ShowExportCommand}" HotKey="Ctrl+E">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Path Classes="icon" Data="{DynamicResource Icon.Export}" />
+                        <TextBlock Text="Exportar video" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto,Auto" Margin="2,8,2,0">
+            <TextBlock Text="{Binding StatusMessage}" Classes="secondary" VerticalAlignment="Center" />
+            <ProgressBar Grid.Column="1" Width="220" Minimum="0" Maximum="1" Value="{Binding Export.Progress}"
+                         IsVisible="{Binding Export.IsExporting}" Margin="8,0" />
+            <Button Grid.Column="2" Classes="standard" Content="Cancelar exportación" Command="{Binding Export.CancelCommand}"
+                    IsVisible="{Binding Export.IsExporting}" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsTranscribing}">
+                <ProgressBar IsIndeterminate="True" Width="160" VerticalAlignment="Center" />
+                <Button Classes="standard" Content="Cancelar subtítulos" Command="{Binding CancelCaptionsCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid RowDefinitions="*,6,330" RowSpacing="6">
+            <Grid ColumnDefinitions="272,6,*,6,320">
+                <!-- Medios -->
+                <Border Classes="panel" Padding="14">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="Medios" Classes="heading" />
+                        <Grid>
+                            <ListBox x:Name="MediaList" ItemsSource="{Binding Assets}" SelectedItem="{Binding SelectedAsset}"
+                                     Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:AssetItemViewModel">
+                                        <StackPanel Background="Transparent" Cursor="Hand" Spacing="1"
+                                                    ContextRequested="OnAssetContextRequested">
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Details}" Classes="secondary" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Text="Arrastra aquí videos, fotos o audio, o usa Archivo › Importar medios."
+                                       IsVisible="{Binding !HasAssets}" IsHitTestVisible="False" TextWrapping="Wrap"
+                                       TextAlignment="Center" VerticalAlignment="Center" Margin="12" Classes="secondary" />
+                        </Grid>
+                    </DockPanel>
+                </Border>
+
+                <!-- Visor -->
+                <Border Grid.Column="2" Classes="panel" Padding="0" x:Name="Viewer" ClipToBounds="True">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Bottom" Background="{DynamicResource Brush.Bg.Surface}" Padding="12,10"
+                                BorderBrush="{DynamicResource Brush.Border.Strong}" BorderThickness="0,2.5,0,0">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Button Classes="iconbtn" Command="{Binding Player.GoToStartCommand}" ToolTip.Tip="Ir al inicio">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.GoStart}" />
+                                    </Button>
+                                    <Button Classes="iconbtn" Command="{Binding Player.StepBackCommand}" HotKey="Left" ToolTip.Tip="Un fotograma atrás (←)">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.StepBack}" />
+                                    </Button>
+                                    <Button Classes="iconbtn" Command="{Binding Player.TogglePlaybackCommand}" HotKey="Space"
+                                            AutomationProperties.Name="{Binding Player.PlaybackLabel}">
+                                        <Panel>
+                                            <Path Classes="icon filled" Data="{DynamicResource Icon.Play}" IsVisible="{Binding !Player.IsPlaying}" />
+                                            <Path Classes="icon filled" Data="{DynamicResource Icon.Pause}" IsVisible="{Binding Player.IsPlaying}" />
+                                        </Panel>
+                                    </Button>
+                                    <Button Classes="iconbtn" Command="{Binding Player.StepForwardCommand}" HotKey="Right" ToolTip.Tip="Un fotograma adelante (→)">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.StepForward}" />
+                                    </Button>
+                                    <Button Classes="iconbtn" Command="{Binding Player.GoToEndCommand}" ToolTip.Tip="Ir al final">
+                                        <Path Classes="icon" Data="{DynamicResource Icon.GoEnd}" />
+                                    </Button>
+                                </StackPanel>
+                                <Slider Grid.Column="1" Minimum="0" Maximum="{Binding Player.TimelineEndFrame}"
+                                        Value="{Binding Player.PlayheadPosition}" IsEnabled="{Binding HasProject}"
+                                        Margin="12,0" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="{Binding Player.Timecode}" Classes="mono" FontWeight="Bold"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <Border Background="{DynamicResource Brush.Bg.Stage}">
+                            <Image Source="{Binding Player.Preview}" Stretch="Uniform" Margin="12" />
+                        </Border>
+                    </DockPanel>
+                </Border>
+
+                <!-- Inspector -->
+                <Border Grid.Column="4" Classes="panel" Padding="14">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Spacing="4">
+                            <TextBlock Text="Inspector" Classes="heading" />
+                            <StackPanel Spacing="4" IsVisible="{Binding Format.HasProject}">
+                                <ComboBox ItemsSource="{Binding Format.Canvases}" SelectedItem="{Binding Format.SelectedCanvas}"
+                                          PlaceholderText="Formato del lienzo" HorizontalAlignment="Stretch" />
+                                <ComboBox ItemsSource="{Binding Format.FrameRates}" SelectedItem="{Binding Format.SelectedFrameRate}"
+                                          PlaceholderText="Fotogramas por segundo" HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding Inspector.Title}" FontWeight="Bold" TextWrapping="Wrap" Margin="0,8,0,0" />
+                            <StackPanel IsVisible="{Binding Inspector.HasClip}" Margin="0,4,0,0">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Text="Velocidad" FontWeight="SemiBold" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Inspector.SpeedText}" Classes="mono secondary" />
+                                </Grid>
+                                <Slider Minimum="{Binding Inspector.MinSpeed}" Maximum="{Binding Inspector.MaxSpeed}"
+                                        Value="{Binding Inspector.Speed}" />
+                            </StackPanel>
+                            <StackPanel IsVisible="{Binding Inspector.IsTextClip}" Spacing="6" Margin="0,4,0,0">
+                                <TextBlock Text="Texto" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding Inspector.TextContent}" AcceptsReturn="True" TextWrapping="Wrap"
+                                         MinHeight="60" PlaceholderText="Escribe tu texto" />
+                                <TextBlock Text="Tamaño" Classes="secondary" />
+                                <Slider Minimum="{Binding Inspector.MinTextSize}" Maximum="{Binding Inspector.MaxTextSize}"
+                                        Value="{Binding Inspector.TextSize}" />
+                                <ComboBox ItemsSource="{Binding Inspector.TextColorPresets}" SelectedItem="{Binding Inspector.TextColor}"
+                                          PlaceholderText="Color" HorizontalAlignment="Stretch" />
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <CheckBox Content="Fondo" IsChecked="{Binding Inspector.TextHasBackground}" />
+                                    <CheckBox Content="Negrita" IsChecked="{Binding Inspector.TextIsBold}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <ScrollViewer Margin="0,8,0,0" IsVisible="{Binding Inspector.HasClip}">
+                            <ItemsControl ItemsSource="{Binding Inspector.Parameters}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:EffectParameterViewModel">
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="{Binding GroupTitle}" IsVisible="{Binding StartsGroup}"
+                                                       FontWeight="Bold" Margin="0,8,0,4" />
+                                            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                                <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="{Binding ValueText}" Classes="mono secondary"
+                                                           VerticalAlignment="Center" Margin="0,0,6,0" />
+                                                <Button Grid.Column="2" Classes="iconbtn" Width="28" Height="28"
+                                                        IsVisible="{Binding Keyframable}" Command="{Binding AddKeyframeCommand}"
+                                                        ToolTip.Tip="Poner un keyframe aquí" AutomationProperties.Name="Keyframe">
+                                                    <Path Width="16" Height="16" Stretch="None" StrokeThickness="2"
+                                                          Stroke="{DynamicResource Brush.Text.Primary}" StrokeJoin="Round"
+                                                          Data="{DynamicResource Icon.Keyframe}"
+                                                          Fill="{Binding HasKeyframes, Converter={x:Static vm:KeyframeFillConverter.Instance}}" />
+                                                </Button>
+                                                <Button Grid.Column="3" Classes="iconbtn" Width="28" Height="28" Margin="4,0,0,0"
+                                                        Click="OnResetEffectClick" Tag="{Binding EffectType}"
+                                                        ToolTip.Tip="Restablecer" AutomationProperties.Name="Restablecer">
+                                                    <Path Classes="icon" Width="16" Height="16" Data="{DynamicResource Icon.Reset}" />
+                                                </Button>
+                                            </Grid>
+                                            <Slider Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Value="{Binding Value}" />
+                                            <Button Classes="standard" Height="28" Padding="10,0" Content="Quitar animación"
+                                                    FontSize="{DynamicResource FontSize.Caption}" HorizontalAlignment="Left"
+                                                    Command="{Binding ClearKeyframesCommand}" IsVisible="{Binding HasKeyframes}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Transparent" />
+
+            <Border Grid.Row="2" Classes="panel" Padding="0" x:Name="TimelinePanel" ClipToBounds="True">
+                <DockPanel>
+                    <!-- Barra de herramientas del timeline -->
+                    <Border DockPanel.Dock="Top" Background="{DynamicResource Brush.Bg.Subtle}" Padding="10,8"
+                            BorderBrush="{DynamicResource Brush.Border.Strong}" BorderThickness="0,0,0,2.5">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <ToggleButton Classes="tool" IsChecked="True" ToolTip.Tip="Seleccionar (V)" AutomationProperties.Name="Seleccionar">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Select}" />
+                            </ToggleButton>
+                            <Button Classes="iconbtn" Command="{Binding SplitSelectedClipCommand}" HotKey="S" ToolTip.Tip="Dividir (S)">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Cut}" />
+                            </Button>
+                            <Button Classes="iconbtn" Command="{Binding DeleteSelectedClipCommand}" HotKey="Delete" ToolTip.Tip="Eliminar (Supr)">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Trash}" />
+                            </Button>
+                            <Rectangle Width="1.5" Height="24" Fill="{DynamicResource Brush.Border.Strong}" Margin="4,0" />
+                            <Button Classes="iconbtn" Command="{Binding UndoCommand}" HotKey="Ctrl+Z" ToolTip.Tip="Deshacer (Ctrl+Z)">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Undo}" />
+                            </Button>
+                            <Button Classes="iconbtn" Command="{Binding RedoCommand}" HotKey="Ctrl+Shift+Z" ToolTip.Tip="Rehacer (Ctrl+Shift+Z)">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Redo}" />
+                            </Button>
+                            <Rectangle Width="1.5" Height="24" Fill="{DynamicResource Brush.Border.Strong}" Margin="4,0" />
+                            <ToggleButton Classes="tool" IsChecked="{Binding MagnetEnabled}" Command="{Binding ToggleMagnetCommand}"
+                                          HotKey="N" ToolTip.Tip="Imán (N)" AutomationProperties.Name="Imán">
+                                <Path Classes="icon" Data="{DynamicResource Icon.Magnet}" />
+                            </ToggleButton>
+                        </StackPanel>
+                    </Border>
+
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <Grid ColumnDefinitions="140,*" RowDefinitions="24,*">
+                            <Border Grid.Column="1" x:Name="Ruler" Width="{Binding TimelineWidth}" HorizontalAlignment="Left"
+                                    Background="{DynamicResource Brush.Bg.Subtle}" Cursor="Hand" PointerPressed="OnRulerPointerPressed">
+                                <ItemsControl Classes="ruler" ItemsSource="{Binding RulerTicks}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:RulerTickViewModel">
+                                            <StackPanel Orientation="Horizontal" Spacing="3">
+                                                <Rectangle Width="1" Height="24" Fill="{DynamicResource Brush.Text.Muted}" />
+                                                <TextBlock Text="{Binding Label}" Classes="mono caption" Margin="0,3,0,0" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+
+                            <ListBox Grid.Row="1" Grid.ColumnSpan="2" Classes="tracks" ItemsSource="{Binding Tracks}"
+                                     SelectedItem="{Binding SelectedTrack}" Padding="0" Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:TrackItemViewModel">
+                                        <Grid ColumnDefinitions="140,*" Height="56">
+                                            <Border Background="{DynamicResource Brush.Bg.Subtle}" BorderBrush="{DynamicResource Brush.Border.Subtle}"
+                                                    BorderThickness="0,0,1.5,1" ContextRequested="OnTrackContextRequested">
+                                                <Grid RowDefinitions="Auto,Auto" Margin="8,0">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="{DynamicResource FontSize.Caption}"
+                                                               VerticalAlignment="Bottom" Margin="0,6,0,0" TextTrimming="CharacterEllipsis" />
+                                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4" Margin="0,2,0,0">
+                                                        <Button Classes="iconbtn" Width="26" Height="26" Click="OnTrackHideClick"
+                                                                IsVisible="{Binding IsVisual}" ToolTip.Tip="Ocultar/Mostrar"
+                                                                AutomationProperties.Name="Ocultar">
+                                                            <Path Classes="icon" Width="16" Height="16" Data="{DynamicResource Icon.Eye}" />
+                                                        </Button>
+                                                        <Button Classes="iconbtn" Width="26" Height="26" Click="OnTrackMuteClick"
+                                                                ToolTip.Tip="Silenciar" AutomationProperties.Name="Silenciar">
+                                                            <Path Classes="icon" Width="16" Height="16" Data="{DynamicResource Icon.Mute}" />
+                                                        </Button>
+                                                        <Button Classes="iconbtn" Width="26" Height="26" Click="OnTrackLockClick"
+                                                                ToolTip.Tip="Bloquear" AutomationProperties.Name="Bloquear">
+                                                            <Path Classes="icon" Width="16" Height="16" Data="{DynamicResource Icon.Lock}" />
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                            <ItemsControl Grid.Column="1" Classes="clips" ItemsSource="{Binding Clips}"
+                                                          Width="{Binding ContentWidth}" HorizontalAlignment="Left">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <Canvas />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate x:DataType="vm:ClipItemViewModel">
+                                                        <Border Classes="clip" Classes.selected="{Binding IsSelected}"
+                                                                Width="{Binding Width}" Height="48" Margin="0,4" Cursor="SizeAll"
+                                                                PointerPressed="OnClipPointerPressed"
+                                                                PointerMoved="OnClipPointerMoved"
+                                                                PointerReleased="OnClipPointerReleased"
+                                                                ContextRequested="OnClipContextRequested">
+                                                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                                                <Image Grid.ColumnSpan="3" Source="{Binding Waveform}" Stretch="Fill"
+                                                                       Opacity="0.35" IsHitTestVisible="False" />
+                                                                <Image Source="{Binding Thumbnail}" Height="44" Stretch="Uniform"
+                                                                       IsHitTestVisible="False" />
+                                                                <Border Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="4"
+                                                                        Background="{DynamicResource Brush.Bg.Surface}"
+                                                                        BorderBrush="{DynamicResource Brush.Border.Strong}" BorderThickness="1.5"
+                                                                        CornerRadius="{DynamicResource Radius.S}" Padding="5,1" IsHitTestVisible="False">
+                                                                    <TextBlock Text="{Binding Label}" Classes="caption"
+                                                                               TextTrimming="CharacterEllipsis" MaxWidth="160" />
+                                                                </Border>
+                                                                <Border Grid.Column="0" Classes="trim-handle" HorizontalAlignment="Left"
+                                                                        Tag="start" PointerPressed="OnTrimPointerPressed"
+                                                                        PointerMoved="OnTrimPointerMoved"
+                                                                        PointerReleased="OnTrimPointerReleased" />
+                                                                <Border Grid.Column="2" Classes="trim-handle"
+                                                                        Tag="end" PointerPressed="OnTrimPointerPressed"
+                                                                        PointerMoved="OnTrimPointerMoved"
+                                                                        PointerReleased="OnTrimPointerReleased" />
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" IsVisible="{Binding !HasTracks}" IsHitTestVisible="False"
+                                       Text="Arrastra aquí un medio de la biblioteca (o un archivo) para empezar a editar."
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Classes="secondary" />
+
+                            <Canvas Grid.Column="1" Grid.RowSpan="2" IsHitTestVisible="False">
+                                <Rectangle Canvas.Left="{Binding Player.PlayheadX}" Width="4" Height="2000"
+                                           Fill="{DynamicResource Brush.Timeline.Playhead}" />
+                            </Canvas>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+    </Panel>
+</Window>

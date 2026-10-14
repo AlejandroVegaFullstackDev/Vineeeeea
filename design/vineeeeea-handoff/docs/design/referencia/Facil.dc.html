@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Vineeeeea — Modo fácil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&amp;family=UnifrakturMaguntia&amp;family=Bricolage+Grotesque:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F3E6}
+a{color:#111111}a:hover{color:#7A3E9D}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 16px;border:2.5px solid #111111;border-radius:12px;background:#FFFFFF;color:#111111;font:700 14px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;text-decoration:none;box-shadow:3px 3px 0 #111111;transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #111111}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #111111}
+.btn:disabled{opacity:.45;cursor:default;transform:none;box-shadow:3px 3px 0 #111111}
+.yellow{background:#D8E50F}
+.cat{display:flex;align-items:center;gap:10px;width:100%;height:46px;padding:0 12px;border:2.5px solid transparent;border-radius:12px;background:transparent;color:#111111;font:700 15px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;text-align:left}
+.cat:hover{background:#EEEAD6}
+.cat[aria-pressed="true"]{background:#CDB3E3;border-color:#111111;box-shadow:3px 3px 0 #111111}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px;min-height:88px;border:2.5px solid #111111;border-radius:14px;color:#111111;font:700 14px 'Bricolage Grotesque',system-ui,sans-serif;text-align:left;cursor:pointer;box-shadow:3px 3px 0 #111111;transition:transform .08s,box-shadow .08s}
+.tile:hover{transform:translate(-1px,-1px) rotate(-.6deg);box-shadow:5px 5px 0 #111111}
+.tile small{font-weight:500;font-size:12px;line-height:1.3;color:#2A2A22}
+.sw{display:flex;flex-direction:column;align-items:center;gap:6px;padding:5px;border:2.5px solid transparent;border-radius:12px;background:transparent;color:#111111;font:700 12px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer}
+.sw:hover{background:#EEEAD6}
+.sw[aria-pressed="true"]{border-color:#111111;background:#D8E50F;box-shadow:3px 3px 0 #111111}
+.add{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:2.5px solid #111111;border-radius:50%;background:#3DBA2E;color:#111111;cursor:pointer;flex:none;box-shadow:2px 2px 0 #111111}
+.add:hover{background:#5BD14B}
+.ghost{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:#111111;cursor:pointer}
+input[type=range]{width:100%;margin:0;accent-color:#F0955A;height:20px}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(90deg)}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #7A3E9D;outline-offset:3px}
+</style>
+</helmet>
+
+<div style="width: 100%; min-width: 0; height: 900px; display: grid; grid-template-rows: 64px minmax(0, 1fr) 300px; gap: 12px; padding: 0 12px 12px 12px; box-sizing: border-box; background-color: #F6F3E6; background-image: radial-gradient(#E3DDC2 1.2px, transparent 1.3px); background-size: 18px 18px; color: #111111; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 14px; overflow: hidden">
+
+  <!-- Barra superior -->
+  <header style="display: flex; align-items: center; gap: 12px">
+    <div style="display: flex; align-items: center; gap: 10px; flex: 1 1 0; min-width: 0">
+      <img src="/_blob/65bfe2eeb1f2b6a4279d6eb4a7e26e83" alt="Vineeeeea" style="width: 44px; height: 44px; flex: none; border: 2.5px solid #111111; border-radius: 12px; box-sizing: border-box; display: block">
+      <span style="font-family: 'UnifrakturMaguntia', 'Old English Text MT', serif; font-size: 32px; line-height: 1">Vineeeeea</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; padding: 3px 10px; border: 2px solid #111111; border-radius: 999px; background: #FFFFFF; font-size: 12px; font-weight: 600">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #3DBA2E; border: 1.5px solid #111111"></span>
+        Demo · se guarda solo
+      </span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <button class="btn" type="button" title="Ctrl+Z">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h11a5 5 0 0 1 0 10h-3"></path></svg>
+        Deshacer
+      </button>
+      <button class="btn" type="button" title="Ctrl+Shift+Z" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"></path><path d="M20 9H9a5 5 0 0 0 0 10h3"></path></svg>
+        Rehacer
+      </button>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex: 1 1 0; min-width: 0">
+      <button class="btn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"></path><path d="M12 17h.01"></path></svg>
+        Ayuda
+      </button>
+      <a class="btn yellow" href="Exportar.dc.html" style="height: 46px; font-size: 15px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 8l5-5 5 5"></path><path d="M5 21h14"></path></svg>
+        Exportar video
+      </a>
+    </div>
+  </header>
+
+  <div style="display: grid; grid-template-columns: 272px minmax(0, 1fr) 340px; gap: 12px; min-height: 0">
+
+    <!-- Agregar -->
+    <aside aria-label="Agregar" style="display: flex; flex-direction: column; gap: 4px; min-height: 0; padding: 14px 12px; border: 2.5px solid #111111; border-radius: 18px; background: #FFFFFF; box-shadow: 4px 4px 0 #111111">
+      <h2 style="margin: 0 4px 8px 4px; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 18px; font-weight: 400">Agregar</h2>
+      <div role="group" aria-label="Qué quieres agregar" style="display: flex; flex-direction: column; gap: 4px">
+        <button class="cat" type="button" aria-pressed="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+          Videos y fotos
+        </button>
+        <button class="cat" type="button" aria-pressed="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          Música y sonido
+        </button>
+        <button class="cat" type="button" aria-pressed="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h16v2"></path><path d="M12 5v14"></path><path d="M9 19h6"></path></svg>
+          Texto
+        </button>
+      </div>
+
+      <div style="height: 2px; margin: 10px 4px; background: #111111; border-radius: 2px"></div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; overflow: auto; min-height: 0; padding: 2px">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 6px; border: 2px solid #111111; border-radius: 12px; background: #F6F3E6">
+          <span aria-hidden="true" style="width: 68px; height: 40px; flex: none; border: 2px solid #111111; border-radius: 7px; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)"></span>
+          <span style="display: flex; flex-direction: column; min-width: 0; flex: 1">
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">paisaje.mp4</span>
+            <span style="color: #4F4D42; font-size: 12px">8 s · ya está en tu video</span>
+          </span>
+          <button class="add" type="button" aria-label="Agregar paisaje.mp4 al final"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 6px; border: 2px solid #111111; border-radius: 12px; background: #F6F3E6">
+          <span aria-hidden="true" style="width: 68px; height: 40px; flex: none; border: 2px solid #111111; border-radius: 7px; background: radial-gradient(circle at 55% 50%, #5BBF4A 0 18%, #C46BC0 19% 42%, #2A1F2E 43%)"></span>
+          <span style="display: flex; flex-direction: column; min-width: 0; flex: 1">
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">logo animado.mp4</span>
+            <span style="color: #4F4D42; font-size: 12px">5 s · ya está en tu video</span>
+          </span>
+          <button class="add" type="button" aria-label="Agregar logo animado.mp4 al final"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 6px; border: 2px solid #111111; border-radius: 12px; background: #F6F3E6">
+          <span aria-hidden="true" style="width: 68px; height: 40px; flex: none; border: 2px solid #111111; border-radius: 7px; background: #2A2A22"></span>
+          <span style="display: flex; flex-direction: column; min-width: 0; flex: 1">
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">2026-03-29 22-12-02.mp4</span>
+            <span style="color: #4F4D42; font-size: 12px">1 min 53 s</span>
+          </span>
+          <button class="add" type="button" aria-label="Agregar 2026-03-29 22-12-02.mp4 al final"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+        </div>
+      </div>
+
+      <button class="btn" type="button" style="margin-top: auto; width: 100%; height: 78px; flex-direction: column; gap: 2px; border-style: dashed; box-shadow: none; background: #EEEAD6">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"></path><path d="M7 8l5-5 5 5"></path><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"></path></svg>
+        Buscar en mi computador
+        <span style="font-weight: 500; font-size: 12px; color: #4F4D42">o suelta los archivos aquí</span>
+      </button>
+    </aside>
+
+    <!-- Visor -->
+    <section aria-label="Vista previa" style="display: flex; flex-direction: column; min-width: 0; min-height: 0; border: 2.5px solid #111111; border-radius: 18px; background: #0A0A0A; box-shadow: 4px 4px 0 #111111; overflow: hidden">
+      <div style="flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 18px 24px 6px 24px">
+        <div role="img" aria-label="Vista previa de tu video" style="position: relative; height: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; filter: {{filterCss}}; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)">
+          <div style="position: absolute; left: 26%; top: 5%; width: 35%; height: 34%; background: radial-gradient(circle at 55% 50%, #5BBF4A 0 18%, #C46BC0 19% 42%, #E9A6E4 43%)"></div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 18px; height: 72px">
+        <span style="min-width: 80px; text-align: right; color: #FFFFFF; font: 700 15px 'JetBrains Mono', ui-monospace, monospace">0:02</span>
+        <button type="button" onClick="{{togglePlay}}" aria-label="{{playLabel}}" title="{{playTitle}}" style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border: 3px solid #111111; border-radius: 50%; background: #D8E50F; color: #111111; cursor: pointer; box-shadow: 0 0 0 3px #D8E50F">
+          <sc-if value="{{playing}}" hint-placeholder-val="{{ false }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+          </sc-if>
+          <sc-if value="{{paused}}" hint-placeholder-val="{{ true }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg>
+          </sc-if>
+        </button>
+        <span style="min-width: 80px; color: #B8B6A0; font: 500 15px 'JetBrains Mono', ui-monospace, monospace">de 0:08</span>
+      </div>
+    </section>
+
+    <!-- Qué hacer con el clip -->
+    <aside aria-label="Editar clip" style="display: flex; flex-direction: column; min-height: 0; border: 2.5px solid #111111; border-radius: 18px; background: #FFFFFF; box-shadow: 4px 4px 0 #111111; overflow: hidden">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 2.5px solid #111111; background: #D8E50F">
+        <span aria-hidden="true" style="width: 48px; height: 28px; flex: none; border: 2px solid #111111; border-radius: 5px; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)"></span>
+        <div style="display: flex; flex-direction: column; min-width: 0">
+          <span style="font-size: 12px; font-weight: 600">¿Qué le hacemos a este clip?</span>
+          <span style="font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">paisaje.mp4</span>
+        </div>
+      </div>
+      <div style="flex: 1 1 auto; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 18px; padding: 14px 14px 16px 14px">
+
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <button class="tile" type="button" title="S" style="background: #CDB3E3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M8.5 7.5L20 18"></path><path d="M8.5 16.5L20 6"></path></svg>
+            Cortar aquí
+            <small>Parte el clip en dos donde está la línea naranja</small>
+          </button>
+          <button class="tile" type="button" style="background: #EEF59A">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"></path><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path></svg>
+            Acortar
+            <small>Quita pedazos del inicio o del final</small>
+          </button>
+          <button class="tile" type="button" style="background: #BFE9B3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 13l4-4"></path><path d="M3.5 17a9 9 0 1 1 17 0"></path></svg>
+            Velocidad
+            <small>Cámara lenta o más rápido</small>
+          </button>
+          <button class="tile" type="button" style="background: #D9C6EC">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
+            Volumen
+            <small>Sube, baja o silencia este clip</small>
+          </button>
+          <button class="tile" type="button" style="background: #EDE6C8">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 4v5h-5"></path></svg>
+            Girar
+            <small>Endereza un video que quedó de lado</small>
+          </button>
+          <button class="tile" type="button" title="Supr" style="background: #FFFFFF">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4141D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M6 7l1 13h10l1-13"></path><path d="M9 7V4h6v3"></path></svg>
+            Quitar
+            <small>Lo saca del video (puedes deshacer)</small>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 15px; font-weight: 400">Estilo</h3>
+          <div role="group" aria-label="Estilo del clip" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px">
+            <sc-for list="{{styles}}" as="s" hint-placeholder-count="4">
+              <button class="sw" type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}">
+                <span aria-hidden="true" style="width: 100%; aspect-ratio: 16 / 10; border: 2px solid #111111; border-radius: 7px; box-sizing: border-box; filter: {{s.css}}; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)"></span>
+                {{s.label}}
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="luz" style="font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 15px">Luz</label>
+          <input id="luz" type="range" min="-100" max="100" value="{{light}}" onChange="{{setLight}}">
+          <div aria-hidden="true" style="display: flex; justify-content: space-between; color: #4F4D42; font-size: 12px; font-weight: 600"><span>Más oscuro</span><span>Más claro</span></div>
+        </div>
+
+        <details style="border-top: 2px dashed #111111; padding-top: 6px">
+          <summary style="display: flex; align-items: center; gap: 6px; height: 36px; font-size: 13px; font-weight: 700">
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+            Ajustes avanzados
+          </summary>
+          <p style="margin: 4px 0 0 20px; color: #4F4D42; font-size: 12px; line-height: 1.5">Posición, escala, contraste, opacidad y keyframes.</p>
+        </details>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Línea de tiempo simplificada -->
+  <section aria-label="Tu video, de inicio a fin" style="display: flex; flex-direction: column; min-height: 0; border: 2.5px solid #111111; border-radius: 18px; background: #FFFFFF; box-shadow: 4px 4px 0 #111111; overflow: hidden">
+    <sc-if value="{{showTip}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: 10px; margin: 10px 12px 0 12px; padding: 6px 6px 6px 12px; border: 2px solid #111111; border-radius: 10px; background: #BFE9B3; font-size: 13px; font-weight: 600">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"></path><path d="M10 21h4"></path><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"></path></svg>
+        <span style="flex: 1">Arrastra la línea naranja para moverte por el video. Arrastra un clip para cambiarlo de lugar.</span>
+        <button class="ghost" type="button" aria-label="Cerrar consejo" onClick="{{hideTip}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button>
+      </div>
+    </sc-if>
+
+    <div style="flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 128px minmax(0, 1fr); margin-top: 6px; overflow: hidden">
+      <div style="display: flex; flex-direction: column; font-size: 14px; font-weight: 700">
+        <div style="height: 24px"></div>
+        <div style="display: flex; align-items: center; gap: 8px; height: 82px; padding-left: 14px">
+          <span aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 2px solid #111111; border-radius: 7px; background: #7A3E9D; color: #FFFFFF"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"></path></svg></span>
+          Tu video
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding-left: 14px">
+          <span aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 2px solid #111111; border-radius: 7px; background: #D9C6EC"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6"><rect x="3" y="9" width="12" height="12" rx="2"></rect><rect x="9" y="3" width="12" height="12" rx="2"></rect></svg></span>
+          Encima
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding-left: 14px">
+          <span aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 2px solid #111111; border-radius: 7px; background: #3DBA2E"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></span>
+          Música
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding-left: 14px">
+          <span aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 2px solid #111111; border-radius: 7px; background: #CDB3E3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round"><path d="M4 7V5h16v2"></path><path d="M12 5v14"></path><path d="M9 19h6"></path></svg></span>
+          Texto
+        </div>
+      </div>
+
+      <div style="position: relative; min-width: 0; overflow: hidden">
+        <div style="position: relative; height: 24px">
+          <sc-for list="{{ticks}}" as="t" hint-placeholder-count="9">
+            <span style="position: absolute; top: 4px; left: {{t.left}}px; color: #4F4D42; font: 700 11px 'JetBrains Mono', ui-monospace, monospace">{{t.label}}</span>
+          </sc-for>
+        </div>
+
+        <div style="position: relative; height: 82px">
+          <div style="position: absolute; top: 4px; left: 12px; width: 352px; height: 72px; border: 4px solid #111111; border-radius: 12px; box-sizing: border-box; overflow: hidden; outline: 4px solid #D8E50F; background: repeating-linear-gradient(90deg, #C9302C 0 8px, #2E9E3E 8px 16px, #D4C02A 16px 24px, #2A44C2 24px 32px, #B532B5 32px 40px, #2BB5BD 40px 48px, #15161A 48px 52px)">
+            <span style="position: absolute; left: 12px; bottom: 5px; padding: 1px 7px; border: 2px solid #111111; border-radius: 6px; background: #FFFFFF; font-size: 12px; font-weight: 700">paisaje.mp4 · 4 s</span>
+            <span aria-hidden="true" style="position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: #D8E50F; border-right: 2px solid #111111"></span>
+            <span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 8px; background: #D8E50F; border-left: 2px solid #111111"></span>
+          </div>
+          <div style="position: absolute; top: 4px; left: 372px; width: 352px; height: 72px; border: 2.5px solid #111111; border-radius: 12px; box-sizing: border-box; overflow: hidden; background: repeating-linear-gradient(90deg, #C9302C 0 8px, #2E9E3E 8px 16px, #D4C02A 16px 24px, #2A44C2 24px 32px, #B532B5 32px 40px, #2BB5BD 40px 48px, #15161A 48px 52px)">
+            <span style="position: absolute; left: 10px; bottom: 6px; padding: 1px 7px; border: 2px solid #111111; border-radius: 6px; background: #FFFFFF; font-size: 12px; font-weight: 700">paisaje.mp4 · 4 s</span>
+          </div>
+          <button type="button" aria-label="Agregar algo al final del video" style="position: absolute; top: 4px; left: 736px; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2.5px dashed #111111; border-radius: 12px; background: #F6F3E6; color: #111111; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+        </div>
+
+        <div style="position: relative; height: 44px">
+          <div style="position: absolute; top: 6px; left: 147px; width: 352px; height: 32px; border: 2.5px solid #111111; border-radius: 9px; box-sizing: border-box; overflow: hidden; background: #D9C6EC">
+            <span style="position: absolute; left: 0; top: 0; bottom: 0; width: 40px; border-right: 2px solid #111111; background: radial-gradient(circle at 50% 50%, #5BBF4A 0 6px, #C46BC0 7px 11px, #2A1F2E 12px)"></span>
+            <span style="position: absolute; left: 48px; top: 4px; font-size: 12px; font-weight: 700">logo animado.mp4</span>
+          </div>
+        </div>
+
+        <div style="position: relative; height: 44px">
+          <div style="position: absolute; top: 6px; left: 12px; width: 712px; height: 32px; border: 2.5px solid #111111; border-radius: 9px; box-sizing: border-box; overflow: hidden; background: #3DBA2E">
+            <div style="position: absolute; left: 4px; right: 4px; top: 3px; bottom: 3px; display: flex; align-items: center; gap: 2px">
+              <sc-for list="{{wave}}" as="b" hint-placeholder-count="140">
+                <span style="flex: 1 1 0; height: {{b.h}}%; border-radius: 1px; background: #1F6B16"></span>
+              </sc-for>
+            </div>
+            <span style="position: absolute; left: 8px; top: 3px; padding: 0 6px; border: 2px solid #111111; border-radius: 5px; background: #FFFFFF; font-size: 11px; font-weight: 700">musica.mp3</span>
+          </div>
+        </div>
+
+        <div style="position: relative; height: 44px">
+          <button type="button" style="position: absolute; top: 6px; left: 12px; height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border: 2.5px dashed #111111; border-radius: 9px; background: #F3ECFA; color: #111111; font: 700 13px 'Bricolage Grotesque', system-ui, sans-serif; cursor: pointer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+            Agregar texto
+          </button>
+        </div>
+
+        <!-- Cabezal -->
+        <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 245px; width: 4px; margin-left: -2px; background: #F0955A; border-left: 1px solid #111111; border-right: 1px solid #111111; pointer-events: none">
+          <span style="position: absolute; top: 0; left: -10px; width: 20px; height: 20px; border: 2.5px solid #111111; border-radius: 50%; background: #F0955A"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { playing: false, style: 'original', light: 0, showTip: true };
+  }
+  renderVals() {
+    const defs = [
+      { id: 'original', label: 'Original', css: 'none' },
+      { id: 'vivo', label: 'Vivo', css: 'saturate(1.5) contrast(1.1)' },
+      { id: 'calido', label: 'Cálido', css: 'sepia(0.35) saturate(1.2)' },
+      { id: 'byn', label: 'B y N', css: 'grayscale(1) contrast(1.1)' }
+    ];
+    const current = defs.find((d) => d.id === this.state.style) || defs[0];
+    const light = this.state.light;
+    const bright = 'brightness(' + (1 + light / 200).toFixed(2) + ')';
+    const filterCss = current.css === 'none' ? bright : current.css + ' ' + bright;
+    const ticks = [];
+    for (let i = 0; i <= 8; i++) ticks.push({ left: 12 + i * 89, label: '0:0' + i });
+    const wave = [];
+    for (let i = 0; i < 140; i++) {
+      const h = 25 + 60 * Math.abs(Math.sin(i * 0.37) * Math.cos(i * 0.11)) + 15 * Math.abs(Math.sin(i * 1.7));
+      wave.push({ h: Math.min(100, Math.round(h)) });
+    }
+    const playing = !!this.state.playing;
+    return {
+      styles: defs.map((d) => ({ ...d, pressed: d.id === current.id ? 'true' : 'false', pick: () => this.setState({ style: d.id }) })),
+      filterCss,
+      light,
+      setLight: (e) => this.setState({ light: Number(e.target.value) }),
+      ticks,
+      wave,
+      playing,
+      paused: !playing,
+      playLabel: playing ? 'Pausar' : 'Reproducir',
+      playTitle: playing ? 'Pausar (Espacio)' : 'Reproducir (Espacio)',
+      togglePlay: () => this.setState((s) => ({ playing: !s.playing })),
+      showTip: this.state.showTip,
+      hideTip: () => this.setState({ showTip: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

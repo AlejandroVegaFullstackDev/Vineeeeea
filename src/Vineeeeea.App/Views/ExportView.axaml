@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vineeeeea.App.ViewModels"
+             x:Class="Vineeeeea.App.Views.ExportView"
+             x:DataType="vm:ExportViewModel">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel MaxWidth="920" Margin="24,24,24,48" Spacing="24">
+
+            <Button Classes="standard" Command="{Binding BackCommand}" HorizontalAlignment="Left" HotKey="Escape"
+                    ToolTip.Tip="Volver a editar (Esc)">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Path Classes="icon" Data="{DynamicResource Icon.Back}" />
+                    <TextBlock Text="Volver a editar" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <StackPanel Spacing="4">
+                <TextBlock Classes="hero" Text="¿Para dónde va tu video?" />
+                <TextBlock Classes="mono" Foreground="{DynamicResource Brush.Text.Secondary}" Text="{Binding ProjectSummary}" />
+            </StackPanel>
+
+            <ItemsControl ItemsSource="{Binding Destinations}" AutomationProperties.Name="Destino del video">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DestinationOptionViewModel">
+                        <RadioButton Classes="option accent card" GroupName="destino" Margin="0,0,14,14"
+                                     IsChecked="{Binding IsSelected}"
+                                     Command="{Binding $parent[ItemsControl].((vm:ExportViewModel)DataContext).SelectDestinationCommand}"
+                                     CommandParameter="{Binding}"
+                                     AutomationProperties.Name="{Binding Title}">
+                            <StackPanel Spacing="6" HorizontalAlignment="Left">
+                                <Panel Height="44" HorizontalAlignment="Left">
+                                    <Border Width="72" Height="42" IsVisible="{Binding IsLandscape}" Classes="shape-glyph"
+                                            Background="{DynamicResource Brush.Shape.Horizontal}" />
+                                    <Border Width="26" Height="42" IsVisible="{Binding !IsLandscape}" Classes="shape-glyph"
+                                            Background="{DynamicResource Brush.Shape.Vertical}" />
+                                </Panel>
+                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="{DynamicResource FontSize.Emphasis}" />
+                                <TextBlock Text="{Binding Description}" Classes="caption" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Spec}" Classes="mono caption" />
+                            </StackPanel>
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Background="{DynamicResource Brush.Selection}" BorderBrush="{DynamicResource Brush.Border.Strong}"
+                    BorderThickness="{DynamicResource Border.Width}" CornerRadius="{DynamicResource Radius.M}"
+                    Padding="14,10" IsVisible="{Binding LetterboxNotice, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Path Classes="icon" Data="{DynamicResource Icon.Info}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding LetterboxNotice}" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Medium" />
+                </StackPanel>
+            </Border>
+
+            <Border Classes="panel" Padding="{DynamicResource Padding.Panel}">
+                <StackPanel Spacing="14">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Nombre del archivo" FontWeight="Bold" />
+                        <TextBox Text="{Binding FileName}" />
+                    </StackPanel>
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Guardar en" FontWeight="Bold" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox Text="{Binding FolderPath}" IsReadOnly="True" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Classes="standard" Content="Cambiar" Margin="10,0,0,0"
+                                    Command="{Binding ChangeFolderCommand}" />
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                <Button Classes="primary hero" Content="¡Exportar!" Command="{Binding ExportCommand}" HotKey="Ctrl+E"
+                        IsVisible="{Binding !IsExporting}" />
+                <TextBlock Text="Puedes seguir editando mientras se exporta." Classes="muted" VerticalAlignment="Center"
+                           FontWeight="Medium" IsVisible="{Binding !IsExporting}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" IsVisible="{Binding IsExporting}">
+                    <ProgressBar Width="260" Minimum="0" Maximum="1" Value="{Binding Progress}" Height="14" />
+                    <TextBlock Text="{Binding ProgressPercent, StringFormat='{}{0}%'}" Classes="mono" VerticalAlignment="Center" />
+                    <Button Classes="standard" Content="Cancelar" Command="{Binding CancelCommand}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="12" IsVisible="{Binding HasFinished}">
+                <TextBlock Text="{Binding FinishedMessage}" FontWeight="Bold" VerticalAlignment="Center"
+                           Foreground="{DynamicResource Brush.Success}" />
+                <Button Classes="standard" Content="Abrir carpeta" Command="{Binding OpenFolderCommand}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

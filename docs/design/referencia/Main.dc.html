@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Vineeeeea — Editor</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&amp;family=UnifrakturMaguntia&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F3E6}
+a{color:#F0955A}a:hover{color:#FFC46B}
+.ib{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;color:#2A2A22;cursor:pointer;flex:none}
+.ib:hover{background:#EEEAD6;color:#FFFFFF}
+.ib[aria-pressed="true"]{background:#0A0A0A;color:#D8E50F}
+.ib.sm{width:28px;height:28px}
+.ib:disabled{opacity:.35;cursor:default;background:transparent}
+.tb{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid #111111;border-radius:6px;background:#FFFFFF;color:#111111;font:500 13px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer}
+.tb:hover{background:#111111}
+.menu{height:32px;padding:0 10px;border:0;border-radius:6px;background:transparent;color:#2A2A22;font:400 13px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer}
+.menu:hover{background:#FFFFFF;color:#FFFFFF}
+.tab{height:30px;padding:0 12px;border:0;border-radius:6px;background:transparent;color:#4F4D42;font:500 12px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer}
+.tab[aria-pressed="true"]{background:#EEEAD6;color:#111111}
+.card{display:flex;flex-direction:column;gap:6px;padding:6px;border:1px solid transparent;border-radius:8px;background:transparent;text-align:left;cursor:grab;color:#111111;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+.card:hover{background:#FFFFFF;border-color:#111111}
+.num{width:100%;min-width:0;border:0;background:transparent;color:#111111;font:400 12px 'JetBrains Mono',ui-monospace,monospace;text-align:right;-moz-appearance:textfield}
+.num::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=range]{width:100%;margin:0;accent-color:#F0955A;height:16px}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(90deg)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #F0955A;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="width: 100%; min-width: 0; height: 900px; display: grid; grid-template-rows: 48px minmax(0, 1fr) 330px 28px; background: #F6F3E6; color: #111111; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 13px; overflow: hidden">
+
+  <!-- Barra superior -->
+  <header style="display: flex; align-items: center; gap: 12px; padding: 0 12px; border-bottom: 1px solid #111111; background: #FFFFFF">
+    <div style="display: flex; align-items: center; gap: 4px; flex: 1 1 0; min-width: 0">
+      <img src="/_blob/65bfe2eeb1f2b6a4279d6eb4a7e26e83" alt="Vineeeeea" style="width: 32px; height: 32px; flex: none; border: 2px solid #111111; border-radius: 8px; box-sizing: border-box; display: block">
+      <span style="margin: 0 10px 0 6px; font-family: 'UnifrakturMaguntia', 'Old English Text MT', serif; font-size: 24px; line-height: 1">Vineeeeea</span>
+      <button class="menu" type="button">Archivo</button>
+      <button class="menu" type="button">Editar</button>
+      <button class="menu" type="button">Ver</button>
+      <button class="menu" type="button">Ayuda</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; flex: none">
+      <span style="font-weight: 600; font-size: 13px">Demo Vineeeeea</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px; color: #4F4D42; font-size: 12px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #3DBA2E"></span>Guardado</span>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex: 1 1 0; min-width: 0">
+      <button class="tb" type="button" title="Exportar (Ctrl+E)" style="background: #D8E50F; border: 2px solid #111111; color: #111111; font-weight: 700; box-shadow: 3px 3px 0 #111111">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 8l5-5 5 5"></path><path d="M5 21h14"></path></svg>
+        Exportar
+      </button>
+    </div>
+  </header>
+
+  <!-- Zona superior: medios · visor · inspector -->
+  <div style="display: grid; grid-template-columns: 272px minmax(0, 1fr) 320px; min-height: 0">
+
+    <!-- Medios -->
+    <aside aria-label="Medios" style="display: flex; flex-direction: column; min-height: 0; border-right: 1px solid #111111; background: #FFFFFF">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 8px 14px">
+        <h2 style="margin: 0; font-size: 13px; font-weight: 600">Medios</h2>
+        <button class="tb" type="button" title="Importar medios (Ctrl+I)" style="height: 28px; padding: 0 10px; font-size: 12px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          Importar
+        </button>
+      </div>
+      <div style="padding: 0 12px 10px 12px">
+        <label for="buscar-medios" style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border: 1px solid #111111; border-radius: 6px; background: #F6F3E6; color: #4F4D42">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input id="buscar-medios" type="search" placeholder="Buscar medios" style="flex: 1; min-width: 0; border: 0; background: transparent; color: #111111; font: 400 12px 'Bricolage Grotesque', system-ui, sans-serif; outline: none">
+        </label>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 0 8px; overflow: auto">
+        <button class="card" type="button" draggable="true" style="border-color: #111111; background: #FFFFFF">
+          <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 5px; overflow: hidden; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)">
+            <span style="position: absolute; right: 4px; bottom: 4px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); color: #FFFFFF; font: 500 10px 'JetBrains Mono', ui-monospace, monospace">0:08</span>
+          </div>
+          <span style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">paisaje.mp4</span>
+        </button>
+        <button class="card" type="button" draggable="true">
+          <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 5px; overflow: hidden; background: radial-gradient(circle at 55% 50%, #5BBF4A 0 18%, #C46BC0 19% 42%, #2A1F2E 43%)">
+            <span style="position: absolute; right: 4px; bottom: 4px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); color: #FFFFFF; font: 500 10px 'JetBrains Mono', ui-monospace, monospace">0:05</span>
+          </div>
+          <span style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">logo animado.mp4</span>
+        </button>
+        <button class="card" type="button" draggable="true">
+          <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 5px; overflow: hidden; background: #22413A; display: flex; align-items: center; justify-content: center; color: #3DBA2E">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            <span style="position: absolute; right: 4px; bottom: 4px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); color: #FFFFFF; font: 500 10px 'JetBrains Mono', ui-monospace, monospace">0:12</span>
+          </div>
+          <span style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">musica.mp3</span>
+        </button>
+        <button class="card" type="button" draggable="true">
+          <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 5px; overflow: hidden; background: #EEEAD6; display: flex; align-items: center; justify-content: center; color: #4F4D42">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+            <span style="position: absolute; right: 4px; bottom: 4px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); color: #FFFFFF; font: 500 10px 'JetBrains Mono', ui-monospace, monospace">1:53</span>
+          </div>
+          <span style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">2026-03-29 22-12-02.mp4</span>
+        </button>
+      </div>
+      <div style="margin: auto 12px 12px 12px; padding: 14px 12px; border: 1px dashed #111111; border-radius: 8px; color: #4F4D42; font-size: 12px; text-align: center; line-height: 1.45">Suelta archivos aquí para importarlos.<br>Arrastra un medio a la línea de tiempo para usarlo.</div>
+    </aside>
+
+    <!-- Visor -->
+    <section aria-label="Visor" style="display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #EEEAD6">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 36px; padding: 0 12px; color: #4F4D42; font-size: 12px">
+        <span>Línea de tiempo · 1920×1080 · 30 fps</span>
+        <button class="tab" type="button" style="display: inline-flex; align-items: center; gap: 4px">Ajustar
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+      </div>
+      <div style="flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 8px 24px">
+        <div role="img" aria-label="Fotograma actual del video" style="position: relative; height: 100%; max-width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)">
+          <div style="position: absolute; left: 26%; top: 5%; width: 35%; height: 34%; background: radial-gradient(circle at 55% 50%, #5BBF4A 0 18%, #C46BC0 19% 42%, #E9A6E4 43%)"></div>
+          <div style="position: absolute; inset: 0; outline: 1px solid #F0955A; outline-offset: -1px"></div>
+          <span style="position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; background: #FFFFFF; border: 1px solid #F0955A"></span>
+          <span style="position: absolute; right: -4px; top: -4px; width: 8px; height: 8px; background: #FFFFFF; border: 1px solid #F0955A"></span>
+          <span style="position: absolute; left: -4px; bottom: -4px; width: 8px; height: 8px; background: #FFFFFF; border: 1px solid #F0955A"></span>
+          <span style="position: absolute; right: -4px; bottom: -4px; width: 8px; height: 8px; background: #FFFFFF; border: 1px solid #F0955A"></span>
+        </div>
+      </div>
+      <!-- Transporte -->
+      <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; height: 52px; padding: 0 12px">
+        <div style="font: 500 13px 'JetBrains Mono', ui-monospace, monospace; color: #111111; white-space: nowrap">00:00:02:18 <span style="color: #4F4D42">/ 00:00:08:00</span></div>
+        <div style="display: flex; align-items: center; gap: 4px">
+          <button class="ib" type="button" aria-label="Ir al inicio" title="Ir al inicio (Inicio)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"></path><path d="M19 5l-10 7 10 7z"></path></svg></button>
+          <button class="ib" type="button" aria-label="Fotograma anterior" title="Fotograma anterior (←)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+          <button type="button" onClick="{{togglePlay}}" aria-label="{{playLabel}}" title="{{playTitle}}" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; border-radius: 50%; background: #111111; color: #F6F3E6; cursor: pointer">
+            <sc-if value="{{playing}}" hint-placeholder-val="{{ false }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+            </sc-if>
+            <sc-if value="{{paused}}" hint-placeholder-val="{{ true }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"></path></svg>
+            </sc-if>
+          </button>
+          <button class="ib" type="button" aria-label="Fotograma siguiente" title="Fotograma siguiente (→)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+          <button class="ib" type="button" aria-label="Ir al final" title="Ir al final (Fin)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"></path><path d="M5 5l10 7-10 7z"></path></svg></button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 4px">
+          <button class="ib" type="button" aria-label="Volumen de previsualización"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg></button>
+          <button class="ib" type="button" aria-label="Pantalla completa" title="Pantalla completa (F)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5"></path><path d="M20 9V4h-5"></path><path d="M4 15v5h5"></path><path d="M20 15v5h-5"></path></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inspector -->
+    <aside aria-label="Inspector" style="display: flex; flex-direction: column; min-height: 0; border-left: 1px solid #111111; background: #FFFFFF">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px 10px 14px">
+        <div style="width: 40px; height: 24px; border-radius: 4px; flex: none; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)"></div>
+        <div style="display: flex; flex-direction: column; min-width: 0">
+          <span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">paisaje.mp4</span>
+          <span style="color: #4F4D42; font-size: 12px">Video 1 · 0:00 – 0:04</span>
+        </div>
+      </div>
+      <div role="group" aria-label="Categoría de propiedades" style="display: flex; gap: 4px; padding: 0 10px 10px 10px; border-bottom: 1px solid #111111">
+        <button class="tab" type="button" aria-pressed="true">Video</button>
+        <button class="tab" type="button" aria-pressed="false">Audio</button>
+        <button class="tab" type="button" aria-pressed="false">Velocidad</button>
+      </div>
+      <div style="flex: 1 1 auto; min-height: 0; overflow: auto; padding: 4px 0 12px 0">
+        <details open style="border-bottom: 1px solid #111111">
+          <summary style="display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; font-weight: 600; font-size: 12px">
+            <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+            Transformar
+          </summary>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 2px 14px 14px 14px">
+            <sc-for list="{{transform}}" as="p" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 76px 28px 28px; align-items: center; column-gap: 4px; row-gap: 2px">
+                <label for="{{p.id}}" style="color: #2A2A22; font-size: 12px">{{p.label}}</label>
+                <div style="display: flex; align-items: center; gap: 2px; height: 26px; padding: 0 6px; border: 1px solid #111111; border-radius: 5px; background: #F6F3E6">
+                  <input class="num" type="number" aria-label="{{p.label}}, valor" value="{{p.value}}" step="{{p.step}}" onChange="{{p.set}}">
+                  <span style="color: #4F4D42; font-size: 11px">{{p.unit}}</span>
+                </div>
+                <button class="ib sm" type="button" aria-label="Keyframe de {{p.label}}" aria-pressed="{{p.kfStr}}" title="Añadir keyframe en el cabezal">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="{{p.kfFill}}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 9-9 9-9-9z"></path></svg>
+                </button>
+                <button class="ib sm" type="button" aria-label="Restablecer {{p.label}}" title="Restablecer" onClick="{{p.reset}}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+                </button>
+                <input id="{{p.id}}" type="range" min="{{p.min}}" max="{{p.max}}" step="{{p.step}}" value="{{p.value}}" onChange="{{p.set}}" style="grid-column: 1 / -1">
+              </div>
+            </sc-for>
+          </div>
+        </details>
+        <details open style="border-bottom: 1px solid #111111">
+          <summary style="display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; font-weight: 600; font-size: 12px">
+            <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+            Ajustes de color
+          </summary>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 2px 14px 14px 14px">
+            <sc-for list="{{color}}" as="p" hint-placeholder-count="2">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 76px 28px 28px; align-items: center; column-gap: 4px; row-gap: 2px">
+                <label for="{{p.id}}" style="color: #2A2A22; font-size: 12px">{{p.label}}</label>
+                <div style="display: flex; align-items: center; gap: 2px; height: 26px; padding: 0 6px; border: 1px solid #111111; border-radius: 5px; background: #F6F3E6">
+                  <input class="num" type="number" aria-label="{{p.label}}, valor" value="{{p.value}}" step="{{p.step}}" onChange="{{p.set}}">
+                  <span style="color: #4F4D42; font-size: 11px">{{p.unit}}</span>
+                </div>
+                <button class="ib sm" type="button" aria-label="Keyframe de {{p.label}}" aria-pressed="{{p.kfStr}}" title="Añadir keyframe en el cabezal">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="{{p.kfFill}}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 9-9 9-9-9z"></path></svg>
+                </button>
+                <button class="ib sm" type="button" aria-label="Restablecer {{p.label}}" title="Restablecer" onClick="{{p.reset}}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v5h5"></path></svg>
+                </button>
+                <input id="{{p.id}}" type="range" min="{{p.min}}" max="{{p.max}}" step="{{p.step}}" value="{{p.value}}" onChange="{{p.set}}" style="grid-column: 1 / -1">
+              </div>
+            </sc-for>
+          </div>
+        </details>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Línea de tiempo -->
+  <section aria-label="Línea de tiempo" style="display: flex; flex-direction: column; min-height: 0; border-top: 1px solid #111111; background: #FFFFFF">
+    <div role="toolbar" aria-label="Herramientas de edición" style="display: flex; align-items: center; gap: 4px; height: 42px; padding: 0 10px; border-bottom: 1px solid #111111">
+      <button class="ib" type="button" aria-label="Seleccionar" aria-pressed="true" title="Seleccionar (V)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3l14 7-6 2-2 6z"></path></svg></button>
+      <button class="ib" type="button" aria-label="Dividir en el cabezal" title="Dividir en el cabezal (S)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M8.5 7.5L20 18"></path><path d="M8.5 16.5L20 6"></path></svg></button>
+      <button class="ib" type="button" aria-label="Eliminar clip" title="Eliminar (Supr)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M6 7l1 13h10l1-13"></path><path d="M9 7V4h6v3"></path></svg></button>
+      <span aria-hidden="true" style="width: 1px; height: 20px; margin: 0 6px; background: #111111"></span>
+      <button class="ib" type="button" aria-label="Deshacer" title="Deshacer (Ctrl+Z)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"></path><path d="M4 9h11a5 5 0 0 1 0 10h-3"></path></svg></button>
+      <button class="ib" type="button" aria-label="Rehacer" title="Rehacer (Ctrl+Shift+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14l5-5-5-5"></path><path d="M20 9H9a5 5 0 0 0 0 10h3"></path></svg></button>
+      <span aria-hidden="true" style="width: 1px; height: 20px; margin: 0 6px; background: #111111"></span>
+      <button class="ib" type="button" aria-label="Imán: ajustar a bordes y cabezal" aria-pressed="{{snapStr}}" onClick="{{toggleSnap}}" title="Imán (N)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v8a6 6 0 0 0 12 0V3"></path><path d="M6 7h4"></path><path d="M14 7h4"></path></svg></button>
+      <div style="flex: 1"></div>
+      <button class="ib" type="button" aria-label="Alejar" title="Alejar (Ctrl+−)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M8 11h6"></path><path d="M20 20l-3.5-3.5"></path></svg></button>
+      <label for="zoom-timeline" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Zoom de la línea de tiempo</label>
+      <input id="zoom-timeline" type="range" min="1" max="100" value="45" style="width: 120px">
+      <button class="ib" type="button" aria-label="Acercar" title="Acercar (Ctrl++)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M8 11h6"></path><path d="M11 8v6"></path><path d="M20 20l-3.5-3.5"></path></svg></button>
+      <button class="tab" type="button" title="Ajustar todo a la vista (Shift+Z)">Ajustar</button>
+    </div>
+
+    <div style="flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 196px minmax(0, 1fr); overflow: hidden">
+      <!-- Cabeceras de pista -->
+      <div style="display: flex; flex-direction: column; border-right: 1px solid #111111; background: #FFFFFF">
+        <div style="height: 28px; border-bottom: 1px solid #111111"></div>
+        <div style="display: flex; align-items: center; gap: 6px; height: 60px; padding: 0 6px 0 12px; border-bottom: 1px solid #E3DDC2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A3E9D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+          <span style="flex: 1; font-weight: 500">Video 2</span>
+          <button class="ib sm" type="button" aria-label="Ocultar Video 2" title="Ocultar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+          <button class="ib sm" type="button" aria-label="Bloquear Video 2" title="Bloquear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0"></path></svg></button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; height: 60px; padding: 0 6px 0 12px; border-bottom: 1px solid #E3DDC2; background: #F5F9C8">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7A3E9D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+          <span style="flex: 1; font-weight: 600">Video 1</span>
+          <button class="ib sm" type="button" aria-label="Ocultar Video 1" title="Ocultar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+          <button class="ib sm" type="button" aria-label="Bloquear Video 1" title="Bloquear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0"></path></svg></button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; height: 60px; padding: 0 6px 0 12px; border-bottom: 1px solid #E3DDC2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3DBA2E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+          <span style="flex: 1; font-weight: 500">Audio 1</span>
+          <button class="ib sm" type="button" aria-label="Silenciar Audio 1" title="Silenciar (M)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg></button>
+          <button class="ib sm" type="button" aria-label="Bloquear Audio 1" title="Bloquear"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0"></path></svg></button>
+        </div>
+        <div style="padding: 8px 10px">
+          <button class="tab" type="button" style="display: inline-flex; align-items: center; gap: 6px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+            Añadir pista
+          </button>
+        </div>
+      </div>
+
+      <!-- Carriles -->
+      <div style="position: relative; min-width: 0; overflow: hidden">
+        <div style="position: relative; height: 28px; border-bottom: 1px solid #111111; background: #FFFFFF">
+          <sc-for list="{{ticks}}" as="t" hint-placeholder-count="16">
+            <div style="position: absolute; top: 0; bottom: 0; left: {{t.left}}px; display: flex; align-items: flex-end; padding-bottom: 4px; border-left: 1px solid #111111">
+              <span style="padding-left: 4px; color: #4F4D42; font: 400 10px 'JetBrains Mono', ui-monospace, monospace">{{t.label}}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- Video 2 -->
+        <div style="position: relative; height: 60px; border-bottom: 1px solid #E3DDC2">
+          <div style="position: absolute; top: 6px; left: 108px; width: 254px; height: 48px; border-radius: 6px; overflow: hidden; background: #7A3E9D; border: 1px solid #111111; box-sizing: border-box">
+            <div style="height: 30px; background: radial-gradient(circle at 20px 15px, #5BBF4A 0 6px, #C46BC0 7px 13px, #2A1F2E 14px); background-size: 46px 30px"></div>
+            <span style="position: absolute; left: 6px; bottom: 3px; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.6); color: #FFFFFF; font-size: 11px">logo animado.mp4</span>
+          </div>
+        </div>
+
+        <!-- Video 1 (pista activa) -->
+        <div style="position: relative; height: 60px; border-bottom: 1px solid #E3DDC2; background: #F5F9C8">
+          <div style="position: absolute; top: 6px; left: 12px; width: 254px; height: 48px; border-radius: 6px; overflow: hidden; background: #7A3E9D; outline: 2px solid #F0955A; outline-offset: 0">
+            <div style="height: 30px; background: repeating-linear-gradient(90deg, #C9302C 0 6px, #2E9E3E 6px 12px, #D4C02A 12px 18px, #2A44C2 18px 24px, #B532B5 24px 30px, #2BB5BD 30px 36px, #15161A 36px 40px)"></div>
+            <span style="position: absolute; left: 12px; bottom: 3px; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.6); color: #FFFFFF; font-size: 11px">paisaje.mp4</span>
+            <span aria-hidden="true" style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #F0955A"></span>
+            <span aria-hidden="true" style="position: absolute; right: 0; top: 0; bottom: 0; width: 6px; background: #F0955A"></span>
+          </div>
+          <div style="position: absolute; top: 6px; left: 268px; width: 254px; height: 48px; border-radius: 6px; overflow: hidden; background: #7A3E9D; border: 1px solid #111111; box-sizing: border-box">
+            <div style="height: 30px; background: repeating-linear-gradient(90deg, #C9302C 0 6px, #2E9E3E 6px 12px, #D4C02A 12px 18px, #2A44C2 18px 24px, #B532B5 24px 30px, #2BB5BD 30px 36px, #15161A 36px 40px)"></div>
+            <span style="position: absolute; left: 6px; bottom: 3px; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.6); color: #FFFFFF; font-size: 11px">paisaje.mp4</span>
+          </div>
+        </div>
+
+        <!-- Audio 1 -->
+        <div style="position: relative; height: 60px; border-bottom: 1px solid #E3DDC2">
+          <div style="position: absolute; top: 6px; left: 12px; width: 510px; height: 48px; border-radius: 6px; overflow: hidden; background: #3DBA2E; border: 1px solid #111111; box-sizing: border-box">
+            <div style="position: absolute; left: 4px; right: 4px; top: 4px; bottom: 4px; display: flex; align-items: center; gap: 1px">
+              <sc-for list="{{wave}}" as="b" hint-placeholder-count="120">
+                <span style="flex: 1 1 0; height: {{b.h}}%; border-radius: 1px; background: #1F6B16"></span>
+              </sc-for>
+            </div>
+            <span style="position: absolute; left: 6px; top: 3px; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.6); color: #FFFFFF; font-size: 11px">musica.mp3</span>
+          </div>
+        </div>
+
+        <!-- Zona de soltar -->
+        <div style="margin: 8px 12px; height: 34px; display: flex; align-items: center; justify-content: center; border: 1px dashed #111111; border-radius: 6px; color: #4F4D42; font-size: 12px">Arrastra medios aquí para crear una pista nueva</div>
+
+        <!-- Cabezal -->
+        <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 178px; width: 2px; margin-left: -1px; background: #F0955A; pointer-events: none">
+          <span style="position: absolute; top: 2px; left: -6px; width: 14px; height: 14px; border-radius: 3px 3px 7px 7px; background: #F0955A"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Barra de estado -->
+  <footer style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; border-top: 1px solid #111111; background: #F6F3E6; color: #4F4D42; font-size: 12px">
+    <span>Importado: 2026-03-29 22-12-02.mp4</span>
+    <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px">1920×1080 · 30 fps · 48 kHz</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      playing: false,
+      snap: true,
+      values: { px: 0, py: 0, scale: 100, rot: 0, opacity: 100, bright: 0, contrast: 20 }
+    };
+  }
+  defs() {
+    return {
+      transform: [
+        { id: 'px', label: 'Posición X', min: -1920, max: 1920, step: 1, unit: 'px', def: 0, kf: false },
+        { id: 'py', label: 'Posición Y', min: -1080, max: 1080, step: 1, unit: 'px', def: 0, kf: false },
+        { id: 'scale', label: 'Escala', min: 10, max: 400, step: 1, unit: '%', def: 100, kf: false },
+        { id: 'rot', label: 'Rotación', min: -180, max: 180, step: 1, unit: '°', def: 0, kf: false },
+        { id: 'opacity', label: 'Opacidad', min: 0, max: 100, step: 1, unit: '%', def: 100, kf: false }
+      ],
+      color: [
+        { id: 'bright', label: 'Brillo', min: -100, max: 100, step: 1, unit: '', def: 0, kf: false },
+        { id: 'contrast', label: 'Contraste', min: -100, max: 100, step: 1, unit: '', def: 0, kf: true }
+      ]
+    };
+  }
+  build(list) {
+    const values = this.state.values;
+    return list.map((p) => ({
+      ...p,
+      value: values[p.id],
+      kfStr: p.kf ? 'true' : 'false',
+      kfFill: p.kf ? 'currentColor' : 'none',
+      set: (e) => {
+        const n = Number(e.target.value);
+        if (Number.isNaN(n)) return;
+        const v = Math.max(p.min, Math.min(p.max, n));
+        this.setState((s) => ({ values: { ...s.values, [p.id]: v } }));
+      },
+      reset: () => this.setState((s) => ({ values: { ...s.values, [p.id]: p.def } }))
+    }));
+  }
+  renderVals() {
+    const d = this.defs();
+    const ticks = [];
+    for (let i = 0; i <= 16; i++) ticks.push({ left: 12 + i * 64, label: '0:' + String(i).padStart(2, '0') });
+    const wave = [];
+    for (let i = 0; i < 120; i++) {
+      const h = 25 + 60 * Math.abs(Math.sin(i * 0.37) * Math.cos(i * 0.11)) + 15 * Math.abs(Math.sin(i * 1.7));
+      wave.push({ h: Math.min(100, Math.round(h)) });
+    }
+    const playing = !!this.state.playing;
+    return {
+      transform: this.build(d.transform),
+      color: this.build(d.color),
+      ticks,
+      wave,
+      playing,
+      paused: !playing,
+      playLabel: playing ? 'Pausar' : 'Reproducir',
+      playTitle: playing ? 'Pausar (Espacio)' : 'Reproducir (Espacio)',
+      togglePlay: () => this.setState((s) => ({ playing: !s.playing })),
+      snapStr: this.state.snap ? 'true' : 'false',
+      toggleSnap: () => this.setState((s) => ({ snap: !s.snap }))
+    };
+  }
+}
+</script>
+</body>
+</html>

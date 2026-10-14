@@ -1,0 +1,109 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Fuente única de verdad del diseño de Vineeeeea. Las vistas solo usan las claves semánticas (Brush.*, Font.*, Radius.*, Shadow.*, Space.*). -->
+
+  <!-- Paleta base (sacada del logo) -->
+  <Color x:Key="Palette.Acid">#D8E50F</Color>
+  <Color x:Key="Palette.AcidSoft">#EEF59A</Color>
+  <Color x:Key="Palette.Purple">#7A3E9D</Color>
+  <Color x:Key="Palette.PurpleSoft">#D9C6EC</Color>
+  <Color x:Key="Palette.Lilac">#CDB3E3</Color>
+  <Color x:Key="Palette.Mohawk">#3DBA2E</Color>
+  <Color x:Key="Palette.MohawkSoft">#BFE9B3</Color>
+  <Color x:Key="Palette.MohawkDeep">#1F6B16</Color>
+  <Color x:Key="Palette.Ear">#F0955A</Color>
+  <Color x:Key="Palette.Bone">#EDE6C8</Color>
+  <Color x:Key="Palette.Paper">#F6F3E6</Color>
+  <Color x:Key="Palette.PaperDots">#E3DDC2</Color>
+  <Color x:Key="Palette.PaperDeep">#EEEAD6</Color>
+  <Color x:Key="Palette.White">#FFFFFF</Color>
+  <Color x:Key="Palette.Ink">#111111</Color>
+  <Color x:Key="Palette.Black">#0A0A0A</Color>
+  <Color x:Key="Palette.Gray700">#2A2A22</Color>
+  <Color x:Key="Palette.Gray500">#4F4D42</Color>
+  <Color x:Key="Palette.Gray300">#B8B6A0</Color>
+  <Color x:Key="Palette.Red">#C4141D</Color>
+
+  <!-- Fondos -->
+  <SolidColorBrush x:Key="Brush.Bg.App" Color="{StaticResource Palette.Paper}" />
+  <SolidColorBrush x:Key="Brush.Bg.AppDots" Color="{StaticResource Palette.PaperDots}" />
+  <SolidColorBrush x:Key="Brush.Bg.Surface" Color="{StaticResource Palette.White}" />
+  <SolidColorBrush x:Key="Brush.Bg.Subtle" Color="{StaticResource Palette.PaperDeep}" />
+  <SolidColorBrush x:Key="Brush.Bg.Stage" Color="{StaticResource Palette.Black}" />
+
+  <!-- Texto -->
+  <SolidColorBrush x:Key="Brush.Text.Primary" Color="{StaticResource Palette.Ink}" />
+  <SolidColorBrush x:Key="Brush.Text.Secondary" Color="{StaticResource Palette.Gray700}" />
+  <SolidColorBrush x:Key="Brush.Text.Muted" Color="{StaticResource Palette.Gray500}" />
+  <SolidColorBrush x:Key="Brush.Text.OnStage" Color="{StaticResource Palette.White}" />
+  <SolidColorBrush x:Key="Brush.Text.OnStageMuted" Color="{StaticResource Palette.Gray300}" />
+  <SolidColorBrush x:Key="Brush.Text.OnAccent" Color="{StaticResource Palette.Ink}" />
+  <SolidColorBrush x:Key="Brush.Text.OnVideo" Color="{StaticResource Palette.White}" />
+
+  <!-- Bordes -->
+  <SolidColorBrush x:Key="Brush.Border.Strong" Color="{StaticResource Palette.Ink}" />
+  <SolidColorBrush x:Key="Brush.Border.Subtle" Color="{StaticResource Palette.PaperDots}" />
+
+  <!-- Acciones y estados -->
+  <SolidColorBrush x:Key="Brush.Accent.Primary" Color="{StaticResource Palette.Acid}" />
+  <SolidColorBrush x:Key="Brush.Accent.PrimarySoft" Color="{StaticResource Palette.AcidSoft}" />
+  <SolidColorBrush x:Key="Brush.Selection" Color="{StaticResource Palette.Lilac}" />
+  <SolidColorBrush x:Key="Brush.Focus" Color="{StaticResource Palette.Purple}" />
+  <SolidColorBrush x:Key="Brush.Danger" Color="{StaticResource Palette.Red}" />
+  <SolidColorBrush x:Key="Brush.Success" Color="{StaticResource Palette.Mohawk}" />
+
+  <!-- Línea de tiempo -->
+  <SolidColorBrush x:Key="Brush.Timeline.Video" Color="{StaticResource Palette.Purple}" />
+  <SolidColorBrush x:Key="Brush.Timeline.Overlay" Color="{StaticResource Palette.PurpleSoft}" />
+  <SolidColorBrush x:Key="Brush.Timeline.Audio" Color="{StaticResource Palette.Mohawk}" />
+  <SolidColorBrush x:Key="Brush.Timeline.AudioWave" Color="{StaticResource Palette.MohawkDeep}" />
+  <SolidColorBrush x:Key="Brush.Timeline.Text" Color="{StaticResource Palette.Lilac}" />
+  <SolidColorBrush x:Key="Brush.Timeline.Playhead" Color="{StaticResource Palette.Ear}" />
+  <SolidColorBrush x:Key="Brush.Timeline.ClipSelected" Color="{StaticResource Palette.Acid}" />
+
+  <!-- Fichas de acción del modo fácil -->
+  <SolidColorBrush x:Key="Brush.Tile.Cut" Color="{StaticResource Palette.Lilac}" />
+  <SolidColorBrush x:Key="Brush.Tile.Trim" Color="{StaticResource Palette.AcidSoft}" />
+  <SolidColorBrush x:Key="Brush.Tile.Speed" Color="{StaticResource Palette.MohawkSoft}" />
+  <SolidColorBrush x:Key="Brush.Tile.Volume" Color="{StaticResource Palette.PurpleSoft}" />
+  <SolidColorBrush x:Key="Brush.Tile.Rotate" Color="{StaticResource Palette.Bone}" />
+  <SolidColorBrush x:Key="Brush.Tile.Remove" Color="{StaticResource Palette.White}" />
+
+  <!-- Tipografía: los .ttf van en Assets/Fonts (licencia OFL, descargar de Google Fonts) -->
+  <FontFamily x:Key="Font.Brand">avares://FrameForge.App/Assets/Fonts#UnifrakturMaguntia</FontFamily>
+  <FontFamily x:Key="Font.Heading">avares://FrameForge.App/Assets/Fonts#Bowlby One</FontFamily>
+  <FontFamily x:Key="Font.UI">avares://FrameForge.App/Assets/Fonts#Bricolage Grotesque</FontFamily>
+  <FontFamily x:Key="Font.Mono">avares://FrameForge.App/Assets/Fonts#JetBrains Mono</FontFamily>
+
+  <x:Double x:Key="FontSize.Caption">12</x:Double>
+  <x:Double x:Key="FontSize.Small">13</x:Double>
+  <x:Double x:Key="FontSize.Body">14</x:Double>
+  <x:Double x:Key="FontSize.Emphasis">15</x:Double>
+  <x:Double x:Key="FontSize.Section">18</x:Double>
+  <x:Double x:Key="FontSize.Title">36</x:Double>
+
+  <!-- Forma -->
+  <CornerRadius x:Key="Radius.S">8</CornerRadius>
+  <CornerRadius x:Key="Radius.M">12</CornerRadius>
+  <CornerRadius x:Key="Radius.L">18</CornerRadius>
+  <CornerRadius x:Key="Radius.Pill">999</CornerRadius>
+  <Thickness x:Key="Border.Width">2.5</Thickness>
+  <Thickness x:Key="Border.WidthSelected">4</Thickness>
+
+  <!-- Sombras duras: se aplican en los estilos con Setter Property="BoxShadow" (S = "2 2 0 0 #111111", M = "3 3 0 0 #111111", L = "4 4 0 0 #111111", XL = "6 6 0 0 #111111"). -->
+
+  <!-- Espaciado (escala de 4) -->
+  <x:Double x:Key="Space.1">4</x:Double>
+  <x:Double x:Key="Space.2">8</x:Double>
+  <x:Double x:Key="Space.3">12</x:Double>
+  <x:Double x:Key="Space.4">16</x:Double>
+  <x:Double x:Key="Space.5">24</x:Double>
+  <x:Double x:Key="Space.6">32</x:Double>
+
+  <!-- Tamaños mínimos de interacción -->
+  <x:Double x:Key="Size.Control">42</x:Double>
+  <x:Double x:Key="Size.ControlLarge">56</x:Double>
+  <x:Double x:Key="Size.IconButton">36</x:Double>
+
+</ResourceDictionary>

@@ -1,0 +1,241 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Estilos base del sistema de diseño (spec §3). Solo usan tokens de Tokens.axaml.
+       Las vistas los aplican por clase: Border.panel, Button.standard, Button.primary, ToggleButton.option. -->
+
+  <Styles.Resources>
+
+    <!-- Botón estándar: fondo blanco, borde fuerte 2,5, radio 12, sombra dura 3 3.
+         Hover se desplaza -1,-1 y sube a 4 4; pressed baja a +2,+2 y 1 1. -->
+    <ControlTheme x:Key="StandardButton" TargetType="Button">
+      <Setter Property="Background" Value="{DynamicResource Brush.Bg.Surface}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Strong}" />
+      <Setter Property="BorderThickness" Value="{DynamicResource Border.Width}" />
+      <Setter Property="CornerRadius" Value="{DynamicResource Radius.M}" />
+      <Setter Property="Padding" Value="{DynamicResource Padding.Button}" />
+      <Setter Property="Height" Value="{DynamicResource Size.Control}" />
+      <Setter Property="FontFamily" Value="{DynamicResource Font.UI}" />
+      <Setter Property="FontSize" Value="{DynamicResource FontSize.Emphasis}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="RenderTransform" Value="none" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.08" />
+        </Transitions>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Panel>
+            <Border Name="PART_FocusRing"
+                    Margin="{DynamicResource Margin.FocusRing}"
+                    CornerRadius="{DynamicResource Radius.L}"
+                    BorderBrush="{DynamicResource Brush.Focus}"
+                    BorderThickness="3"
+                    IsVisible="False"
+                    IsHitTestVisible="False" />
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              CornerRadius="{TemplateBinding CornerRadius}"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Padding="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                              BoxShadow="{DynamicResource Shadow.M}" />
+          </Panel>
+        </ControlTemplate>
+      </Setter>
+
+      <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="RecognizesAccessKey" Value="True" />
+        <Setter Property="Transitions">
+          <Transitions>
+            <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.08" />
+          </Transitions>
+        </Setter>
+      </Style>
+
+      <Style Selector="^:pointerover">
+        <Setter Property="RenderTransform" Value="translate(-1px,-1px)" />
+      </Style>
+      <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BoxShadow" Value="{DynamicResource Shadow.L}" />
+      </Style>
+
+      <Style Selector="^:pressed">
+        <Setter Property="RenderTransform" Value="translate(2px,2px)" />
+      </Style>
+      <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BoxShadow" Value="{DynamicResource Shadow.Pressed}" />
+      </Style>
+
+      <Style Selector="^:focus-visible /template/ Border#PART_FocusRing">
+        <Setter Property="IsVisible" Value="True" />
+      </Style>
+
+      <Style Selector="^:disabled">
+        <Setter Property="Opacity" Value="0.45" />
+        <Setter Property="Cursor" Value="Arrow" />
+      </Style>
+      <Style Selector="^:disabled:pointerover">
+        <Setter Property="RenderTransform" Value="none" />
+      </Style>
+      <Style Selector="^:disabled:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BoxShadow" Value="{DynamicResource Shadow.M}" />
+      </Style>
+      <Style Selector="^:disabled:pressed">
+        <Setter Property="RenderTransform" Value="none" />
+      </Style>
+      <Style Selector="^:disabled:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="BoxShadow" Value="{DynamicResource Shadow.M}" />
+      </Style>
+    </ControlTheme>
+
+    <!-- Botón primario: igual que el estándar con el acento ácido. Uno por pantalla. -->
+    <ControlTheme x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+      <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Text.OnAccent}" />
+    </ControlTheme>
+
+    <!-- Opción conmutable (tarjetas de forma, pestañas): superficie normal; al marcarse, fondo de selección. -->
+    <ControlTheme x:Key="OptionToggle" TargetType="ToggleButton" BasedOn="{StaticResource StandardButton}">
+      <Style Selector="^:checked /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Brush.Selection}" />
+      </Style>
+      <Style Selector="^:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource Brush.Selection}" />
+        <Setter Property="BoxShadow" Value="{DynamicResource Shadow.L}" />
+      </Style>
+    </ControlTheme>
+
+  </Styles.Resources>
+
+  <!-- Superficie de panel: fondo blanco, borde fuerte, radio 18, sombra dura 4 4. -->
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{DynamicResource Brush.Bg.Surface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Border.Width}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.L}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Shadow.L}" />
+  </Style>
+
+  <!-- Iconos de trazo de Icons.axaml (spec §3): 2,6 px con extremos redondeados; la variante rellena es para reproducir/pausa. -->
+  <Style Selector="Path.icon">
+    <Setter Property="Width" Value="{DynamicResource Size.Icon}" />
+    <Setter Property="Height" Value="{DynamicResource Size.Icon}" />
+    <Setter Property="Stretch" Value="None" />
+    <Setter Property="Stroke" Value="{DynamicResource Brush.Text.Primary}" />
+    <Setter Property="StrokeThickness" Value="{DynamicResource Icon.StrokeWidth}" />
+    <Setter Property="StrokeLineCap" Value="Round" />
+    <Setter Property="StrokeJoin" Value="Round" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+  <Style Selector="Path.icon.filled">
+    <Setter Property="Fill" Value="{DynamicResource Brush.Text.Primary}" />
+  </Style>
+
+  <!-- Mapeo de clases a los temas anteriores. -->
+  <Style Selector="Button.standard">
+    <Setter Property="Theme" Value="{StaticResource StandardButton}" />
+  </Style>
+  <Style Selector="Button.primary">
+    <Setter Property="Theme" Value="{StaticResource PrimaryButton}" />
+  </Style>
+  <Style Selector=":is(ToggleButton).option">
+    <Setter Property="Theme" Value="{StaticResource OptionToggle}" />
+  </Style>
+  <!-- Tarjetas de opción marcadas con acento en lugar de Brush.Selection, y más elevadas (spec §4.1). -->
+  <Style Selector=":is(ToggleButton).option.accent:checked /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Primary}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource Shadow.XL}" />
+  </Style>
+  <Style Selector=":is(ToggleButton).option.card">
+    <Setter Property="Height" Value="NaN" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Card}" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.L}" />
+  </Style>
+
+  <!-- Botón protagonista de una pantalla ("¡Empezar!", "¡Exportar!"). -->
+  <Style Selector="Button.primary.hero">
+    <Setter Property="Height" Value="{DynamicResource Size.ControlLarge}" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Hero}" />
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Heading}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Section}" />
+    <Setter Property="FontWeight" Value="Normal" />
+  </Style>
+
+  <!-- Fila de lista clicable (recientes, medios): papel, borde fuerte, sin sombra; al pasar, color de selección. -->
+  <Style Selector="Button.row">
+    <Setter Property="Theme" Value="{StaticResource StandardButton}" />
+    <Setter Property="Height" Value="NaN" />
+    <Setter Property="Padding" Value="{DynamicResource Padding.Row}" />
+    <Setter Property="Background" Value="{DynamicResource Brush.Bg.App}" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+  <Style Selector="Button.row /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="BoxShadow" Value="none" />
+  </Style>
+  <Style Selector="Button.row:pointerover">
+    <Setter Property="RenderTransform" Value="none" />
+  </Style>
+  <Style Selector="Button.row:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource Brush.Selection}" />
+    <Setter Property="BoxShadow" Value="none" />
+  </Style>
+
+  <!-- Silueta de la forma del video en las tarjetas de Inicio. -->
+  <Style Selector="Border.shape-glyph">
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Strong}" />
+    <Setter Property="BorderThickness" Value="{DynamicResource Border.Width}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.S}" />
+  </Style>
+
+  <!-- Zona para soltar archivos: borde punteado sobre fondo sutil. -->
+  <Style Selector="Rectangle.drop-zone">
+    <Setter Property="Fill" Value="{DynamicResource Brush.Bg.Subtle}" />
+    <Setter Property="Stroke" Value="{DynamicResource Brush.Border.Strong}" />
+    <Setter Property="StrokeThickness" Value="2.5" />
+    <Setter Property="StrokeDashArray" Value="3,2" />
+    <Setter Property="RadiusX" Value="14" />
+    <Setter Property="RadiusY" Value="14" />
+  </Style>
+
+  <!-- Miniatura cuando aún no hay imagen del medio. -->
+  <Style Selector="Border.thumbnail-placeholder">
+    <Setter Property="Background" Value="{DynamicResource Brush.Bg.Subtle}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Strong}" />
+    <Setter Property="BorderThickness" Value="2" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius.S}" />
+  </Style>
+
+  <!-- Texto con tokens de tipografía. -->
+  <Style Selector="TextBlock.hero">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Heading}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Hero}" />
+  </Style>
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Heading}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Heading}" />
+  </Style>
+  <Style Selector="TextBlock.caption">
+    <Setter Property="FontSize" Value="{DynamicResource FontSize.Caption}" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Secondary}" />
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Muted}" />
+  </Style>
+  <Style Selector="TextBlock.mono">
+    <Setter Property="FontFamily" Value="{DynamicResource Font.Mono}" />
+  </Style>
+
+</Styles>

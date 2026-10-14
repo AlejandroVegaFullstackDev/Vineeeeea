@@ -1,0 +1,121 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vineeeeea.App.ViewModels"
+             x:Class="Vineeeeea.App.Views.StartView"
+             x:DataType="vm:StartViewModel">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel MaxWidth="1080" Margin="24,40,24,48" Spacing="32">
+
+            <StackPanel Orientation="Horizontal" Spacing="18">
+                <Border Width="88" Height="88" CornerRadius="{DynamicResource Radius.L}" ClipToBounds="True"
+                        BorderBrush="{DynamicResource Brush.Border.Strong}" BorderThickness="{DynamicResource Border.Width}"
+                        BoxShadow="{DynamicResource Shadow.L}">
+                    <Image Source="/Assets/Brand/icono.png" AutomationProperties.Name="Vineeeeea" />
+                </Border>
+                <StackPanel VerticalAlignment="Center" Spacing="4">
+                    <TextBlock Classes="hero" Text="¿Qué vamos a editar hoy?" />
+                    <TextBlock Foreground="{DynamicResource Brush.Text.Secondary}" FontWeight="Medium"
+                               Text="Escoge la forma de tu video. Lo demás lo ajustamos por ti." />
+                </StackPanel>
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,24,340">
+                <Border Classes="panel" Padding="{DynamicResource Padding.Panel}" VerticalAlignment="Top">
+                    <StackPanel Spacing="20">
+                        <TextBlock Classes="title" Text="Nuevo video" />
+
+                        <ItemsControl ItemsSource="{Binding Shapes}" AutomationProperties.Name="Forma del video">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Rows="1" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ShapeOptionViewModel">
+                                    <RadioButton Classes="option accent card" GroupName="forma" Margin="0,0,14,0"
+                                                 IsChecked="{Binding IsSelected}"
+                                                 Command="{Binding $parent[ItemsControl].((vm:StartViewModel)DataContext).SelectShapeCommand}"
+                                                 CommandParameter="{Binding}"
+                                                 AutomationProperties.Name="{Binding Title}">
+                                        <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                            <Panel Height="42" HorizontalAlignment="Center">
+                                                <Border Width="72" Height="42" IsVisible="{Binding IsHorizontal}" Classes="shape-glyph"
+                                                        Background="{DynamicResource Brush.Shape.Horizontal}" />
+                                                <Border Width="26" Height="42" IsVisible="{Binding IsVertical}" Classes="shape-glyph"
+                                                        Background="{DynamicResource Brush.Shape.Vertical}" />
+                                                <Border Width="42" Height="42" IsVisible="{Binding IsSquare}" Classes="shape-glyph"
+                                                        Background="{DynamicResource Brush.Shape.Square}" />
+                                            </Panel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Hint}" Classes="caption" HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </RadioButton>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Expander Header="Opciones avanzadas" HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Fotogramas por segundo" FontWeight="Bold" />
+                                    <ComboBox ItemsSource="{Binding FrameRates}" SelectedItem="{Binding SelectedFrameRate}" MinWidth="120" />
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Audio" FontWeight="Bold" />
+                                    <ComboBox ItemsSource="{Binding SampleRates}" SelectedItem="{Binding SelectedSampleRate}" MinWidth="120" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Classes="primary hero" Content="¡Empezar!" Command="{Binding StartCommand}" />
+                            <Button Classes="standard" Command="{Binding OpenProjectCommand}" HotKey="Ctrl+O"
+                                    ToolTip.Tip="Abrir un proyecto (Ctrl+O)">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="Abrir un proyecto…" VerticalAlignment="Center" />
+                                    <TextBlock Text="Ctrl+O" Classes="mono caption" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <Panel>
+                            <Rectangle Classes="drop-zone" />
+                            <TextBlock Margin="18" TextAlignment="Center" TextWrapping="Wrap" FontWeight="SemiBold"
+                                       Text="O suelta aquí tus videos y empezamos de una con ellos." />
+                        </Panel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Classes="panel" Padding="18,24" VerticalAlignment="Top">
+                    <StackPanel Spacing="12">
+                        <TextBlock Classes="title" Text="Seguir editando" Margin="4,0,4,4" />
+                        <ItemsControl ItemsSource="{Binding Recents}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:RecentProjectViewModel">
+                                    <Button Classes="row" Margin="0,0,0,8"
+                                            Command="{Binding $parent[ItemsControl].((vm:StartViewModel)DataContext).OpenRecentCommand}"
+                                            CommandParameter="{Binding}"
+                                            AutomationProperties.Name="{Binding Name}">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Classes="thumbnail-placeholder" Width="76" Height="44">
+                                                <Path Classes="icon" Data="{DynamicResource Icon.Video}" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Details}" Classes="caption" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Classes="muted" FontSize="{DynamicResource FontSize.Small}" FontWeight="Medium" Margin="4"
+                                   TextWrapping="Wrap" IsVisible="{Binding !HasRecents}"
+                                   Text="Tus proyectos recientes aparecen aquí." />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

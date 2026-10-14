@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Vineeeeea.App/Vineeeeea.App.csproj" />
+    <Project Path="src/Vineeeeea.Application/Vineeeeea.Application.csproj" />
+    <Project Path="src/Vineeeeea.Domain/Vineeeeea.Domain.csproj" />
+    <Project Path="src/Vineeeeea.Infrastructure/Vineeeeea.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Vineeeeea.App.Tests/Vineeeeea.App.Tests.csproj" />
+    <Project Path="tests/Vineeeeea.Application.Tests/Vineeeeea.Application.Tests.csproj" />
+    <Project Path="tests/Vineeeeea.Domain.Tests/Vineeeeea.Domain.Tests.csproj" />
+    <Project Path="tests/Vineeeeea.IntegrationTests/Vineeeeea.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Vineeeeea — Inicio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One&amp;family=Bricolage+Grotesque:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F3E6}
+a{color:#111111}a:hover{color:#7A3E9D}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border:2.5px solid #111111;border-radius:12px;background:#FFFFFF;color:#111111;font:700 15px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;text-decoration:none;box-shadow:3px 3px 0 #111111;transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 #111111;color:#111111}
+.fmt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 10px 14px 10px;border:2.5px solid #111111;border-radius:16px;background:#FFFFFF;color:#111111;font:700 15px 'Bricolage Grotesque',system-ui,sans-serif;cursor:pointer;box-shadow:3px 3px 0 #111111}
+.fmt:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 #111111}
+.fmt[aria-pressed="true"]{background:#D8E50F;box-shadow:6px 6px 0 #111111;transform:translate(-2px,-2px)}
+.rec{display:flex;align-items:center;gap:12px;padding:10px;border:2.5px solid #111111;border-radius:14px;background:#F6F3E6;text-decoration:none;color:#111111}
+.rec:hover{background:#CDB3E3;color:#111111}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(90deg)}
+select{height:44px;padding:0 10px;border:2.5px solid #111111;border-radius:12px;background:#FFFFFF;color:#111111;font:600 14px 'Bricolage Grotesque',system-ui,sans-serif}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #7A3E9D;outline-offset:3px}
+</style>
+</helmet>
+
+<div style="width: 100%; min-width: 0; min-height: 900px; box-sizing: border-box; padding: 40px 24px 48px 24px; background-color: #F6F3E6; background-image: radial-gradient(#E3DDC2 1.2px, transparent 1.3px); background-size: 18px 18px; color: #111111; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 15px">
+  <div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px">
+
+    <div style="display: flex; align-items: center; gap: 18px">
+      <img src="/_blob/65bfe2eeb1f2b6a4279d6eb4a7e26e83" alt="Vineeeeea" style="width: 88px; height: 88px; flex: none; border: 3px solid #111111; border-radius: 22px; box-sizing: border-box; box-shadow: 4px 4px 0 #111111; display: block">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 44px; font-weight: 400; line-height: 1">¿Qué vamos a editar hoy?</h1>
+        <span style="color: #2A2A22; font-weight: 500">Escoge la forma de tu video. Lo demás lo ajustamos por ti.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+      <section aria-labelledby="nuevo-titulo" style="flex: 999 1 540px; min-width: 0; display: flex; flex-direction: column; gap: 20px; padding: 24px; border: 2.5px solid #111111; border-radius: 20px; background: #FFFFFF; box-shadow: 5px 5px 0 #111111">
+        <h2 id="nuevo-titulo" style="margin: 0; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 20px; font-weight: 400">Nuevo video</h2>
+
+        <div role="group" aria-label="Forma del video" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 14px">
+          <button class="fmt" type="button" aria-pressed="true">
+            <span aria-hidden="true" style="width: 72px; height: 42px; border: 3px solid #111111; border-radius: 6px; background: #F0955A"></span>
+            Horizontal
+            <span style="font-size: 12px; font-weight: 500">YouTube, computador</span>
+          </button>
+          <button class="fmt" type="button" aria-pressed="false">
+            <span aria-hidden="true" style="width: 26px; height: 42px; border: 3px solid #111111; border-radius: 6px; background: #CDB3E3"></span>
+            Vertical
+            <span style="font-size: 12px; font-weight: 500">TikTok, Reels, Shorts</span>
+          </button>
+          <button class="fmt" type="button" aria-pressed="false">
+            <span aria-hidden="true" style="width: 42px; height: 42px; border: 3px solid #111111; border-radius: 6px; background: #3DBA2E"></span>
+            Cuadrado
+            <span style="font-size: 12px; font-weight: 500">Publicaciones de feed</span>
+          </button>
+        </div>
+
+        <details>
+          <summary style="display: flex; align-items: center; gap: 6px; height: 32px; font-size: 13px; font-weight: 700">
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+            Opciones avanzadas
+          </summary>
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 0 0 20px">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="fps" style="font-size: 13px; font-weight: 700">Fotogramas por segundo</label>
+              <select id="fps"><option>24</option><option>25</option><option selected>30</option><option>60</option></select>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <label for="audio-hz" style="font-size: 13px; font-weight: 700">Audio</label>
+              <select id="audio-hz"><option>44,1 kHz</option><option selected>48 kHz</option></select>
+            </div>
+          </div>
+        </details>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+          <a class="btn" href="Facil.dc.html" style="height: 56px; padding: 0 28px; background: #D8E50F; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 18px; font-weight: 400; box-shadow: 5px 5px 0 #111111">¡Empezar!</a>
+          <button class="btn" type="button">Abrir un proyecto… <span style="font: 700 11px 'JetBrains Mono', ui-monospace, monospace; color: #4F4D42">Ctrl+O</span></button>
+        </div>
+
+        <div style="padding: 18px; border: 2.5px dashed #111111; border-radius: 14px; background: #EEEAD6; text-align: center; font-weight: 600; line-height: 1.5">O suelta aquí tus videos y empezamos de una con ellos.</div>
+      </section>
+
+      <section aria-labelledby="recientes-titulo" style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding: 24px 18px; border: 2.5px solid #111111; border-radius: 20px; background: #FFFFFF; box-shadow: 5px 5px 0 #111111">
+        <h2 id="recientes-titulo" style="margin: 0 4px 4px 4px; font-family: 'Bowlby One', 'Arial Black', sans-serif; font-size: 20px; font-weight: 400">Seguir editando</h2>
+        <a class="rec" href="Facil.dc.html">
+          <span aria-hidden="true" style="width: 76px; height: 44px; flex: none; border: 2px solid #111111; border-radius: 8px; background: linear-gradient(90deg, #C9302C 0 16.6%, #2E9E3E 16.6% 33.3%, #D4C02A 33.3% 50%, #2A44C2 50% 66.6%, #B532B5 66.6% 83.3%, #2BB5BD 83.3%)"></span>
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <span style="font-weight: 700">Demo Vineeeeea</span>
+            <span style="font-size: 12px; font-weight: 500; color: #2A2A22">0:08 · [ruta del proyecto]</span>
+          </span>
+        </a>
+        <p style="margin: 4px; color: #4F4D42; font-size: 13px; font-weight: 500; line-height: 1.5">Tus proyectos recientes aparecen aquí.</p>
+      </section>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
