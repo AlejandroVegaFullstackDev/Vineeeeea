@@ -13,6 +13,15 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" />
   </ItemGroup>
+  <!-- ffmpeg y ffprobe compilados con build/android/build-ffmpeg.sh; se empaquetan como lib*.so para que Android los extraiga y se puedan ejecutar. -->
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)..\..\build\android\out\arm64-v8a\libffmpeg.so')">
+    <AndroidNativeLibrary Include="..\..\build\android\out\arm64-v8a\libffmpeg.so" Abi="arm64-v8a" />
+    <AndroidNativeLibrary Include="..\..\build\android\out\arm64-v8a\libffprobe.so" Abi="arm64-v8a" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)..\..\build\android\out\x86_64\libffmpeg.so')">
+    <AndroidNativeLibrary Include="..\..\build\android\out\x86_64\libffmpeg.so" Abi="x86_64" />
+    <AndroidNativeLibrary Include="..\..\build\android\out\x86_64\libffprobe.so" Abi="x86_64" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Vineeeeea.App\Vineeeeea.App.csproj" />
   </ItemGroup>

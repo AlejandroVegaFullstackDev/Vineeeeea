@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Compilación de binarios de terceros para móvil
+build/android/work/
+build/android/out/
