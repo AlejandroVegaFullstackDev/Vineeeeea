@@ -7,7 +7,7 @@ namespace Vineeeeea.E2E.Tests;
 
 /// <summary>
 /// Drives the packaged windows executable through Windows UI Automation, the desktop equivalent of a browser E2E.
-/// It only runs when VINEEEEEA_APP_EXE points to a built Vineeeeea.App.exe, so it stays off machines without a desktop.
+/// It only runs when VINEEEEEA_APP_EXE points to a built Vineeeeea.Desktop.exe, so it stays off machines without a desktop.
 /// </summary>
 public class DesktopSmokeTests
 {

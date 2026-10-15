@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Vineeeeea.App/Vineeeeea.App.csproj" />
+    <Project Path="src/Vineeeeea.Desktop/Vineeeeea.Desktop.csproj" />
     <Project Path="src/Vineeeeea.Application/Vineeeeea.Application.csproj" />
     <Project Path="src/Vineeeeea.Domain/Vineeeeea.Domain.csproj" />
     <Project Path="src/Vineeeeea.Infrastructure/Vineeeeea.Infrastructure.csproj" />

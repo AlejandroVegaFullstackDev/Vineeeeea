@@ -36,5 +36,5 @@ jobs:
       - name: E2E de escritorio (FlaUI, informativo)
         continue-on-error: true
         env:
-          VINEEEEEA_APP_EXE: ${{ github.workspace }}\src\Vineeeeea.App\bin\Release\net10.0\Vineeeeea.App.exe
+          VINEEEEEA_APP_EXE: ${{ github.workspace }}\src\Vineeeeea.Desktop\bin\Release\net10.0\Vineeeeea.Desktop.exe
         run: dotnet test tests/Vineeeeea.E2E.Tests/Vineeeeea.E2E.Tests.csproj -c Release --no-build --filter "Category=E2E"

@@ -1,7 +1,7 @@
 using System;
 using Avalonia;
 
-namespace Vineeeeea.App;
+namespace Vineeeeea.Desktop;
 
 internal sealed class Program
 {
@@ -10,7 +10,7 @@ internal sealed class Program
         .StartWithClassicDesktopLifetime(args);
 
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+        => AppBuilder.Configure<Vineeeeea.App.App>()
             .UsePlatformDetect()
 #if DEBUG
             .WithDeveloperTools()

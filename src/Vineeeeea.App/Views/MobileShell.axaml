@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Vineeeeea.App.ViewModels"
+             xmlns:views="using:Vineeeeea.App.Views"
+             x:Class="Vineeeeea.App.Views.MobileShell"
+             x:DataType="vm:MainViewModel"
+             Background="{DynamicResource Brush.Bg.App}"
+             FontFamily="{DynamicResource Font.UI}">
+    <!-- Raíz de móvil: una sola vista, sin modo avanzado ni menús de escritorio. -->
+    <Panel>
+        <Panel IsVisible="{Binding !HasProject}">
+            <views:StartView DataContext="{Binding Start}" />
+        </Panel>
+        <Panel IsVisible="{Binding IsExportScreen}">
+            <views:ExportView DataContext="{Binding Export}" />
+        </Panel>
+        <Panel IsVisible="{Binding IsEasyEditing}">
+            <views:EasyEditorView />
+        </Panel>
+    </Panel>
+</UserControl>

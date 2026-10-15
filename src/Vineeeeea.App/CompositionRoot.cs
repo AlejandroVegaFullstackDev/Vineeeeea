@@ -1,6 +1,7 @@
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Vineeeeea.App.Services;
 using Vineeeeea.App.ViewModels;
-using Vineeeeea.App.Views;
 using Vineeeeea.Application.Config;
 using Vineeeeea.Application.Controllers;
 using Vineeeeea.Application.Services;
@@ -11,7 +12,10 @@ namespace Vineeeeea.App;
 
 public static class CompositionRoot
 {
-    public static MainViewModel CreateMainViewModel(MainWindow window, AppConfig config, EditorSession session, IToolRunner? toolRunner = null)
+    public static MainViewModel CreateMainViewModel(TopLevel topLevel, AppConfig config, EditorSession session, IToolRunner? toolRunner = null) =>
+        CreateMainViewModel(topLevel.StorageProvider, topLevel.Launcher, config, session, toolRunner);
+
+    public static MainViewModel CreateMainViewModel(IStorageProvider storageProvider, ILauncher launcher, AppConfig config, EditorSession session, IToolRunner? toolRunner = null)
     {
         var processRunner = toolRunner ?? new ProcessRunner();
         var renderEngine = new FfmpegRenderEngine(processRunner, new TextFileStore(config), config);
@@ -28,7 +32,7 @@ public static class CompositionRoot
             new ClipPreviewController(new FfmpegMediaPreviewCache(processRunner, config)),
             new CaptionsController(session, new WhisperTranscriber(processRunner, config)),
             new FreezeController(session, new FfmpegFrameExtractor(processRunner, config)),
-            new FileDialogService(window.StorageProvider, window.Launcher),
+            new FileDialogService(storageProvider, launcher),
             new JsonUserPreferences(config));
     }
 }

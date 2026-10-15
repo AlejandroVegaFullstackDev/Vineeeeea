@@ -27,8 +27,8 @@ Editor de video de escritorio para Windows en C#/.NET 10 y Avalonia 12.
 ```bash
 dotnet build Vineeeeea.slnx
 dotnet test Vineeeeea.slnx
-dotnet run --project src/Vineeeeea.App
-dotnet run --project src/Vineeeeea.App -- "C:\ruta\proyecto.vine"
+dotnet run --project src/Vineeeeea.Desktop
+dotnet run --project src/Vineeeeea.Desktop -- "C:\ruta\proyecto.vine"
 ```
 
 Atajos: `Espacio` reproducir/pausa, `Ctrl+Z`/`Ctrl+Y` deshacer/rehacer, `Ctrl+B` dividir en el cabezal,
@@ -67,7 +67,19 @@ VINEEEEEA_SCREENSHOT_DIR="C:\ruta\capturas" dotnet test tests/Vineeeeea.App.Test
 | `Vineeeeea.Domain` | `Models` (proyecto, pistas, clips, medios, textos, efectos), `Errors`, `Utils`. Sin dependencias externas |
 | `Vineeeeea.Application` | `Controllers` (casos de uso), `Services` (contratos, sesión con historial, plan de render), `Dtos`, `Config`, `Utils` |
 | `Vineeeeea.Infrastructure` | `Implements` (ffprobe, ffmpeg, ffplay, whisper.cpp, proyecto JSON), `Services` (procesos, textos), `Dtos`, `Utils` |
-| `Vineeeeea.App` | Ventana, ViewModels y composición de dependencias (`CompositionRoot`) |
+| `Vineeeeea.App` | Biblioteca de UI: vistas, ViewModels y composición de dependencias (`CompositionRoot`) |
+| `Vineeeeea.Desktop` | Arranque de escritorio (Windows, Linux, macOS) |
+| `Vineeeeea.Android` | Arranque Android (fuera de `Vineeeeea.slnx`; necesita el workload `android`, JDK 17 y Android SDK) |
 
 Los proyectos se guardan como `.vine` (JSON UTF-8, `SchemaVersion` 3; abre también las versiones 1 y 2). El guardado
 es atómico y deja una copia `.bak`. Las reglas de trabajo del repositorio están en `CLAUDE.md`.
+
+## Android
+
+```
+dotnet workload install android
+dotnet build src/Vineeeeea.Android -c Release -t:InstallAndroidDependencies -p:AndroidSdkDirectory=$HOME/Android/Sdk -p:JavaSdkDirectory=<jdk17> -p:AcceptAndroidSDKLicenses=True
+dotnet build src/Vineeeeea.Android -c Release -p:AndroidSdkDirectory=$HOME/Android/Sdk -p:JavaSdkDirectory=<jdk17>
+```
+
+El APK queda en `src/Vineeeeea.Android/bin/Release/net10.0-android/`. El motor de video móvil aún no existe: `UnsupportedToolRunner` avisa en lugar de fallar con un error de ejecutable.

@@ -5,11 +5,15 @@ using Avalonia.Markup.Xaml;
 using Vineeeeea.App.Views;
 using Vineeeeea.Application.Config;
 using Vineeeeea.Application.Services;
+using Vineeeeea.Infrastructure.Services;
 
 namespace Vineeeeea.App;
 
 public partial class App : Avalonia.Application
 {
+    /// <summary>Set by a mobile head before the app starts: iOS and Android cannot launch ffmpeg as a process.</summary>
+    public static IToolRunner? MobileToolRunner { get; set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -29,6 +33,11 @@ public partial class App : Avalonia.Application
             {
                 _ = viewModel.OpenProjectFromPathAsync(projectPath);
             }
+        }
+
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        {
+            singleView.MainView = new MobileShell(MobileToolRunner);
         }
 
         base.OnFrameworkInitializationCompleted();
