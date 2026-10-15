@@ -12,8 +12,8 @@ public class RenderPlanBuilderTests
     private const long TwoSecondsUs = 2_000_000;
 
     private static readonly FrameSize Size = new(640, 360);
-    private static readonly MediaAsset Video = new(Guid.NewGuid(), MediaKind.Video, @"C:\media\a.mp4", TenSecondsUs, 1920, 1080, hasAudio: true);
-    private static readonly MediaAsset Music = new(Guid.NewGuid(), MediaKind.Audio, @"C:\media\m.mp3", TenSecondsUs, null, null, hasAudio: true);
+    private static readonly MediaAsset Video = new(Guid.NewGuid(), MediaKind.Video, TestPaths.Abs(@"C:\media\a.mp4"), TenSecondsUs, 1920, 1080, hasAudio: true);
+    private static readonly MediaAsset Music = new(Guid.NewGuid(), MediaKind.Audio, TestPaths.Abs(@"C:\media\m.mp3"), TenSecondsUs, null, null, hasAudio: true);
 
     private static Project NewProject(bool hideOverlay = false, bool muteMusic = false)
     {

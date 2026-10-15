@@ -34,7 +34,7 @@ public class EditingControllerTests
 
     private static (EditorSession Session, TimelineController Timeline, Guid ClipId) SessionWithClip()
     {
-        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, @"C:\media\clip.mp4", FourSecondsUs, 1920, 1080, hasAudio: true);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, TestPaths.Abs(@"C:\media\clip.mp4"), FourSecondsUs, 1920, 1080, hasAudio: true);
         var session = new EditorSession();
         session.Open(new Project(Guid.NewGuid(), "Edición", Config.DefaultProjectSettings).AddAsset(video), filePath: null);
         var timeline = new TimelineController(session);
@@ -114,7 +114,7 @@ public class EditingControllerTests
     public void Unsaved_changes_follow_the_saved_snapshot_through_undo()
     {
         var (session, timeline, clipId) = SessionWithClip();
-        session.MarkSaved(@"C:\proyectos\demo.vine");
+        session.MarkSaved(TestPaths.Abs(@"C:\proyectos\demo.vine"));
 
         timeline.ShiftClip(clipId, 5);
         Assert.True(session.HasUnsavedChanges);
@@ -130,7 +130,7 @@ public class EditingControllerTests
         var engine = new RecordingRenderEngine();
         var whatsApp = ExportDestinations.Get(ExportDestinations.WhatsApp);
 
-        await new ExportController(session, engine).ExportAsync(whatsApp, @"C:\videos\final.mp4", new Progress<double>(), CancellationToken.None);
+        await new ExportController(session, engine).ExportAsync(whatsApp, TestPaths.Abs(@"C:\videos\final.mp4"), new Progress<double>(), CancellationToken.None);
 
         Assert.Equal(new FrameSize(1280, 720), engine.Exported!.OutputSize);
         Assert.Equal(120, engine.Exported.DurationFrames);
@@ -145,14 +145,14 @@ public class EditingControllerTests
         var controller = new ExportController(session, new RecordingRenderEngine());
         var youTube = ExportDestinations.Get(ExportDestinations.YouTube);
 
-        await Assert.ThrowsAsync<BusinessRuleException>(() => controller.ExportAsync(youTube, @"C:\videos\final.mp4", new Progress<double>(), CancellationToken.None));
-        await Assert.ThrowsAsync<ValidationException>(() => controller.ExportAsync(youTube, @"C:\videos\final.avi", new Progress<double>(), CancellationToken.None));
+        await Assert.ThrowsAsync<BusinessRuleException>(() => controller.ExportAsync(youTube, TestPaths.Abs(@"C:\videos\final.mp4"), new Progress<double>(), CancellationToken.None));
+        await Assert.ThrowsAsync<ValidationException>(() => controller.ExportAsync(youTube, TestPaths.Abs(@"C:\videos\final.avi"), new Progress<double>(), CancellationToken.None));
     }
 
     [Fact]
     public void Dropping_media_without_a_matching_track_creates_one_in_a_single_undo_step()
     {
-        var music = new MediaAsset(Guid.NewGuid(), MediaKind.Audio, @"C:\media\musica.mp3", FourSecondsUs, null, null, hasAudio: true);
+        var music = new MediaAsset(Guid.NewGuid(), MediaKind.Audio, TestPaths.Abs(@"C:\media\musica.mp3"), FourSecondsUs, null, null, hasAudio: true);
         var session = new EditorSession();
         session.Open(new Project(Guid.NewGuid(), "Soltar", Config.DefaultProjectSettings).AddAsset(music), filePath: null);
         var timeline = new TimelineController(session);

@@ -11,7 +11,7 @@ namespace Vineeeeea.Application.Tests;
 
 public class ControllerTests
 {
-    private const string MediaPath = @"C:\media\clip.mp4";
+    private static readonly string MediaPath = TestPaths.Abs(@"C:\media\clip.mp4");
     private const long ThreeSecondsUs = 3_000_000;
 
     private static readonly AppConfig Config = AppConfig.FromEnvironment(_ => null);
@@ -136,8 +136,8 @@ public class ControllerTests
         var store = new FakeStore();
         var controller = new ProjectFileController(session, store, new FakeRecentProjects(), Config);
 
-        await Assert.ThrowsAsync<ValidationException>(() => controller.SaveAsAsync(@"C:\proyectos\demo.json", CancellationToken.None));
-        await controller.SaveAsAsync(@"C:\proyectos\demo.vine", CancellationToken.None);
+        await Assert.ThrowsAsync<ValidationException>(() => controller.SaveAsAsync(TestPaths.Abs(@"C:\proyectos\demo.json"), CancellationToken.None));
+        await controller.SaveAsAsync(TestPaths.Abs(@"C:\proyectos\demo.vine"), CancellationToken.None);
 
         Assert.False(session.HasUnsavedChanges);
         Assert.Same(session.Project, store.Saved);
@@ -157,7 +157,7 @@ public class ControllerTests
         var photo = new ProbedMedia(null, [new ProbedStream(ProbedStreamType.Video, "png", 1080, 1350, false)], formatName);
         var controller = new MediaImportController(OpenSession(), new FakeProbe(photo));
 
-        var asset = await controller.ImportAsync(@"C:\fotos\playa.png", CancellationToken.None);
+        var asset = await controller.ImportAsync(TestPaths.Abs(@"C:\fotos\playa.png"), CancellationToken.None);
 
         Assert.Equal(MediaKind.Image, asset.Kind);
         Assert.Equal((1080, 1350), (asset.Width, asset.Height));
@@ -172,11 +172,11 @@ public class ControllerTests
         var recents = new FakeRecentProjects();
         var controller = new ProjectFileController(session, store, recents, Config);
 
-        await controller.SaveAsAsync(@"C:\proyectos\demo.vine", CancellationToken.None);
-        await controller.OpenAsync(@"C:\proyectos\demo.vine", CancellationToken.None);
+        await controller.SaveAsAsync(TestPaths.Abs(@"C:\proyectos\demo.vine"), CancellationToken.None);
+        await controller.OpenAsync(TestPaths.Abs(@"C:\proyectos\demo.vine"), CancellationToken.None);
 
         Assert.Equal(2, recents.Remembered.Count);
-        Assert.All(recents.Remembered, recent => Assert.Equal((@"C:\proyectos\demo.vine", "Prueba"), (recent.FilePath, recent.Name)));
+        Assert.All(recents.Remembered, recent => Assert.Equal((TestPaths.Abs(@"C:\proyectos\demo.vine"), "Prueba"), (recent.FilePath, recent.Name)));
     }
 
     [Theory]

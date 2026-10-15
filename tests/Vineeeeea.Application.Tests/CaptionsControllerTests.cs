@@ -27,7 +27,7 @@ public class CaptionsControllerTests
 
     private static (EditorSession Session, Clip Clip) SessionWithClip(bool hasAudio, double speed = 1)
     {
-        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, @"C:\media\charla.mp4", TenSecondsUs, 1920, 1080, hasAudio);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, TestPaths.Abs(@"C:\media\charla.mp4"), TenSecondsUs, 1920, 1080, hasAudio);
         var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
         var clip = new Clip(Guid.NewGuid(), video.Id, 30, 2_000_000, 6_000_000, speed, []);
         var session = new EditorSession();

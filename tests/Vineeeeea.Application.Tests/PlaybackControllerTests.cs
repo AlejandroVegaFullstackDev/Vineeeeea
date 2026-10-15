@@ -43,7 +43,7 @@ public class PlaybackControllerTests
 
     private static (EditorSession Session, MediaAsset Video, Track Track) SessionWithVideoTrack(bool hasAudio = false)
     {
-        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, @"C:\media\clip.mp4", 10 * OneSecondUs, 1920, 1080, hasAudio);
+        var video = new MediaAsset(Guid.NewGuid(), MediaKind.Video, TestPaths.Abs(@"C:\media\clip.mp4"), 10 * OneSecondUs, 1920, 1080, hasAudio);
         var track = new Track(Guid.NewGuid(), TrackKind.Video, "Video 1", isMuted: false, isHidden: false);
         var session = new EditorSession();
         session.Open(new Project(Guid.NewGuid(), "Prueba", Config.DefaultProjectSettings).AddAsset(video).AddTrack(track), filePath: null);

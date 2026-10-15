@@ -138,9 +138,24 @@ internal static class ProjectFileMapper
     {
         var relativePath = Path.GetRelativePath(projectDirectory, absolutePath);
         var isInsideProject = !Path.IsPathRooted(relativePath) && !relativePath.StartsWith("..", StringComparison.Ordinal);
-        return isInsideProject ? relativePath : absolutePath;
+        // Always '/' inside the file so a project saved on one OS opens on another.
+        return isInsideProject ? relativePath.Replace('\\', '/') : absolutePath;
     }
 
-    private static string ToAbsolutePath(string storedPath, string projectDirectory) =>
-        Path.GetFullPath(Path.Combine(projectDirectory, storedPath));
+    private static string ToAbsolutePath(string storedPath, string projectDirectory)
+    {
+        if (IsForeignAbsolute(storedPath))
+        {
+            return storedPath;
+        }
+
+        var normalized = storedPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+        return Path.GetFullPath(Path.Combine(projectDirectory, normalized));
+    }
+
+    /// <summary>A Windows absolute path ("D:\x", "\\server\x") read on another OS: keep it untouched instead of gluing it onto the project folder.</summary>
+    private static bool IsForeignAbsolute(string storedPath) =>
+        !OperatingSystem.IsWindows()
+        && ((storedPath.Length >= 3 && char.IsAsciiLetter(storedPath[0]) && storedPath[1] == ':' && (storedPath[2] == '\\' || storedPath[2] == '/'))
+            || storedPath.StartsWith(@"\\", StringComparison.Ordinal));
 }

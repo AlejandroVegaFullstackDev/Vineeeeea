@@ -63,7 +63,7 @@ public class JsonProjectStoreTests
         await store.SaveAsync(SampleProject(directory.Combine("media", "clip.mp4"), @"D:\musica\fondo.wav"), filePath, CancellationToken.None);
         var json = await File.ReadAllTextAsync(filePath);
 
-        Assert.Contains(@"media\\clip.mp4", json);
+        Assert.Contains("media/clip.mp4", json);
         Assert.DoesNotContain(directory.Path.Replace(@"\", @"\\"), json);
         Assert.Contains(@"D:\\musica\\fondo.wav", json);
     }

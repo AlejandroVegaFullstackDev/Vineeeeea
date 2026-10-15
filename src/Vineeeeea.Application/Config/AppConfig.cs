@@ -37,14 +37,14 @@ public sealed partial record AppConfig(
     private const string DefaultFfprobePath = "ffprobe";
     private const string DefaultFfmpegPath = "ffmpeg";
     private const string DefaultFfplayPath = "ffplay";
-    private const string DefaultFontFile = "segoeui.ttf";
-    private const string DefaultBoldFontFile = "segoeuib.ttf";
     private const string AppDataFolderName = "Vineeeeea";
     private const string CacheFolderName = "Cache";
     private const string RecentProjectsFileName = "recientes.json";
     private const string PreferencesFileName = "preferencias.json";
     private const string ToolsFolderName = "tools";
-    private const string DefaultWhisperRelativePath = @"whisper\Release\whisper-cli.exe";
+    private static readonly string DefaultWhisperRelativePath = OperatingSystem.IsWindows()
+        ? Path.Combine("whisper", "Release", "whisper-cli.exe")
+        : Path.Combine("whisper", "whisper-cli");
     private const string DefaultWhisperModelRelativePath = @"models\ggml-base.bin";
     private const string DefaultCaptionLanguage = "auto";
     private const int DefaultProbeTimeoutSeconds = 30;
@@ -76,7 +76,6 @@ public sealed partial record AppConfig(
             throw new ValidationException($"{CaptionLanguageVariable} debe ser «auto» o un código de idioma como «es».");
         }
 
-        var fontsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
         var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppDataFolderName);
         var toolsDirectory = Path.Combine(appDataDirectory, ToolsFolderName);
 
@@ -87,8 +86,8 @@ public sealed partial record AppConfig(
             ReadValue(readVariable, CacheDirectoryVariable, Path.Combine(appDataDirectory, CacheFolderName)),
             Path.Combine(appDataDirectory, RecentProjectsFileName),
             Path.Combine(appDataDirectory, PreferencesFileName),
-            ReadValue(readVariable, FontPathVariable, Path.Combine(fontsDirectory, DefaultFontFile)),
-            ReadValue(readVariable, BoldFontPathVariable, Path.Combine(fontsDirectory, DefaultBoldFontFile)),
+            ReadValue(readVariable, FontPathVariable, FindSystemFont(bold: false)),
+            ReadValue(readVariable, BoldFontPathVariable, FindSystemFont(bold: true)),
             ReadValue(readVariable, WhisperPathVariable, Path.Combine(toolsDirectory, DefaultWhisperRelativePath)),
             ReadValue(readVariable, WhisperModelVariable, Path.Combine(toolsDirectory, DefaultWhisperModelRelativePath)),
             captionLanguage,
@@ -108,6 +107,22 @@ public sealed partial record AppConfig(
     {
         var value = readVariable(variable);
         return string.IsNullOrWhiteSpace(value) ? fallback : value;
+    }
+
+    /// <summary>Segoe UI on Windows; on Linux/macOS the first common sans font found, so drawtext keeps working.</summary>
+    private static string FindSystemFont(bool bold)
+    {
+        var fontsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Fonts);
+        string[] candidates = OperatingSystem.IsWindows()
+            ? [Path.Combine(fontsDirectory, bold ? "segoeuib.ttf" : "segoeui.ttf")]
+            :
+            [
+                bold ? "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" : "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                bold ? "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" : "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+                bold ? "/usr/share/fonts/TTF/DejaVuSans-Bold.ttf" : "/usr/share/fonts/TTF/DejaVuSans.ttf",
+                bold ? "/System/Library/Fonts/Supplemental/Arial Bold.ttf" : "/System/Library/Fonts/Supplemental/Arial.ttf",
+            ];
+        return candidates.FirstOrDefault(File.Exists) ?? candidates[0];
     }
 
     [GeneratedRegex("^(auto|[a-z]{2,3})$")]
