@@ -23,8 +23,8 @@ JOBS=${JOBS:-$(nproc)}
 
 case "$ABI" in
   arm64-v8a) TRIPLE=aarch64-linux-android; FF_ARCH=aarch64; X264_ASM=(); FF_ASM=() ;;
-  # Sin nasm el ensamblador x86 no está disponible: solo se usa para el emulador, no para teléfonos.
-  x86_64)    TRIPLE=x86_64-linux-android;  FF_ARCH=x86_64;  X264_ASM=(--disable-asm); FF_ASM=(--disable-x86asm) ;;
+  # Sin nasm no hay ensamblador x86 y el ensamblador en línea de swscale daba colores corruptos: se desactiva todo, solo afecta al emulador, no a los teléfonos.
+  x86_64)    TRIPLE=x86_64-linux-android;  FF_ARCH=x86_64;  X264_ASM=(--disable-asm); FF_ASM=(--disable-asm) ;;
   *) echo "ABI no soportada: $ABI" >&2; exit 1 ;;
 esac
 
