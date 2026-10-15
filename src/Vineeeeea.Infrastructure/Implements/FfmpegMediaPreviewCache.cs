@@ -14,7 +14,7 @@ namespace Vineeeeea.Infrastructure.Implements;
 /// Thumbnails and waveforms are derived data: they live outside the project, are keyed by the media file's identity
 /// (path, size, modification time) and can be deleted at any time to be regenerated.
 /// </summary>
-public sealed class FfmpegMediaPreviewCache(ProcessRunner processRunner, AppConfig config) : IMediaPreviewCache
+public sealed class FfmpegMediaPreviewCache(IToolRunner processRunner, AppConfig config) : IMediaPreviewCache
 {
     private const int ThumbnailHeight = 72;
     private const long MaxThumbnailOffsetUs = 1_000_000;

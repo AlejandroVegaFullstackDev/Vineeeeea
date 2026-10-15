@@ -11,9 +11,9 @@ namespace Vineeeeea.App;
 
 public static class CompositionRoot
 {
-    public static MainViewModel CreateMainViewModel(MainWindow window, AppConfig config, EditorSession session)
+    public static MainViewModel CreateMainViewModel(MainWindow window, AppConfig config, EditorSession session, IToolRunner? toolRunner = null)
     {
-        var processRunner = new ProcessRunner();
+        var processRunner = toolRunner ?? new ProcessRunner();
         var renderEngine = new FfmpegRenderEngine(processRunner, new TextFileStore(config), config);
         return new MainViewModel(
             session,

@@ -7,7 +7,7 @@ using static Vineeeeea.Infrastructure.Utils.FfmpegExpressions;
 
 namespace Vineeeeea.Infrastructure.Implements;
 
-public sealed class FfmpegFrameExtractor(ProcessRunner processRunner, AppConfig config) : IFrameExtractor
+public sealed class FfmpegFrameExtractor(IToolRunner processRunner, AppConfig config) : IFrameExtractor
 {
     public async Task<string> ExtractAsync(string mediaPath, long sourceUs, CancellationToken cancellationToken)
     {

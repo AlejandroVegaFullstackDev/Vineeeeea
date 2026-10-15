@@ -10,7 +10,7 @@ using static Vineeeeea.Infrastructure.Utils.FfmpegExpressions;
 
 namespace Vineeeeea.Infrastructure.Implements;
 
-public sealed class WhisperTranscriber(ProcessRunner processRunner, AppConfig config) : ISpeechTranscriber
+public sealed class WhisperTranscriber(IToolRunner processRunner, AppConfig config) : ISpeechTranscriber
 {
     private const string WorkFolderName = "transcription";
     private const string AudioFileName = "audio.wav";

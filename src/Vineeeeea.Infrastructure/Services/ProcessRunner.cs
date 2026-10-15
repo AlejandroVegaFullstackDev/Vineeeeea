@@ -6,7 +6,7 @@ using Vineeeeea.Infrastructure.Dtos;
 
 namespace Vineeeeea.Infrastructure.Services;
 
-public sealed class ProcessRunner
+public sealed class ProcessRunner : IToolRunner
 {
     public async Task<ProcessResult> RunAsync(
         string executable,

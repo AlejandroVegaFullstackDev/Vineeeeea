@@ -9,7 +9,7 @@ using static Vineeeeea.Infrastructure.Utils.FfmpegExpressions;
 
 namespace Vineeeeea.Infrastructure.Implements;
 
-public sealed class FfmpegRenderEngine(ProcessRunner processRunner, TextFileStore textFiles, AppConfig config) : IRenderEngine
+public sealed class FfmpegRenderEngine(IToolRunner processRunner, TextFileStore textFiles, AppConfig config) : IRenderEngine
 {
     private const string ProgressTimeKey = "out_time_us=";
     private const string PartialFileSuffix = ".part";

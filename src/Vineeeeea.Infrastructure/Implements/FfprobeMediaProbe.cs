@@ -7,7 +7,7 @@ using Vineeeeea.Infrastructure.Utils;
 
 namespace Vineeeeea.Infrastructure.Implements;
 
-public sealed class FfprobeMediaProbe(ProcessRunner processRunner, AppConfig config) : IMediaProbe
+public sealed class FfprobeMediaProbe(IToolRunner processRunner, AppConfig config) : IMediaProbe
 {
     public async Task<ProbedMedia> ProbeAsync(string filePath, CancellationToken cancellationToken)
     {

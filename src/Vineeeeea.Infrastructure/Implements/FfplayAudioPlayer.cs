@@ -5,7 +5,7 @@ using Vineeeeea.Infrastructure.Services;
 
 namespace Vineeeeea.Infrastructure.Implements;
 
-public sealed class FfplayAudioPlayer(ProcessRunner processRunner, AppConfig config) : IAudioPlayer
+public sealed class FfplayAudioPlayer(IToolRunner processRunner, AppConfig config) : IAudioPlayer
 {
     public Task PlayAsync(RenderPlan plan, CancellationToken cancellationToken)
     {
